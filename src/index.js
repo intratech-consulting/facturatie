@@ -47,7 +47,7 @@ function main(timestamp) {
     // Assuming schema validation logic here
 
     const credentials = require('amqplib').credentials.plain('guest', 'guest');
-    amqp.connect('amqp://10.2.160.51', { credentials }, function (error0, connection) {
+    amqp.connect('amqp://10.2.160.9', { credentials }, function (error0, connection) {
         if (error0) {
             throw error0;
         }
@@ -59,8 +59,14 @@ function main(timestamp) {
             console.log('Channel created'); // Add this line to log successful channel creation
             const queue = 'heartbeat_queue';
 
-            channel.assertQueue(queue, { durable: true });
-            console.log('Queue asserted'); // Add this line to log successful queue assertion
+            try {
+                channel.assertQueue(queue, { durable: false });
+                console.log('Queue asserted');
+            } catch (error) {
+                console.error('Error asserting queue:', error.message);
+                // Handle the error gracefully, for example, by logging it or retrying with different parameters.
+            }
+            
             channel.sendToQueue(queue, Buffer.from(xml_doc));
             console.log('Message sent');
 
@@ -72,11 +78,17 @@ function main(timestamp) {
     });
 }
 
-try {
-    setInterval(() => {
+function sendHeartbeat() {
+    try {
         main(DateTime.now());
-    }, 1000); // Send heartbeat every 1 second
-} catch (error) {
-    console.error('Error:', error);
-    process.exit(1);
+    } catch (error) {
+        console.error('Error:', error);
+        process.exit(1);
+    } finally {
+        // Call sendHeartbeat again after 5 seconds
+        setTimeout(sendHeartbeat, 5000);
+    }
 }
+
+// Call sendHeartbeat initially
+sendHeartbeat();
