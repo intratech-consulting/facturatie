@@ -3,7 +3,7 @@ const fs = require('fs');
 const xmlbuilder = require('xmlbuilder');
 const { DateTime } = require('luxon');
 
-const TEAM = 'Facturatie';
+const TEAM = 'facturatie';
 
 function main(timestamp) {
     const logger = require('pino')({
@@ -46,8 +46,8 @@ function main(timestamp) {
 
     // Assuming schema validation logic here
 
-    const credentials = require('amqplib').credentials.plain('guest', 'guest');
-    amqp.connect('amqp://10.2.160.9', { credentials }, function (error0, connection) {
+    const credentials = require('amqplib').credentials.plain('user', 'password');
+    amqp.connect('amqp://10.2.160.51', { credentials }, function (error0, connection) {
         if (error0) {
             throw error0;
         }
@@ -60,7 +60,7 @@ function main(timestamp) {
             const queue = 'heartbeat_queue';
 
             try {
-                channel.assertQueue(queue, { durable: false });
+                channel.assertQueue(queue, { durable: true });
                 console.log('Queue asserted');
             } catch (error) {
                 console.error('Error asserting queue:', error.message);
