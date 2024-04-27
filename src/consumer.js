@@ -1,23 +1,30 @@
-const amqp = require('amqplib');
+const amqp = require('amqplib/callback_api');
 
-async function consumeMessages() {
-    const credentials = require('amqplib').credentials.plain('user', 'password');
-    const connection = await amqp.connect('amqp://10.2.160.51');
-    const channel = await connection.createChannel();
+function consumeMessages(queue) {
+    const credentials = amqp.credentials.plain('user', 'password');
+    amqp.connect('amqp://10.2.160.51', { credentials }, function (error0, connection) {
+        if (error0) {
+            throw error0;
+        }
+        console.log('Connected to RabbitMQ');
+        connection.createChannel(function (error1, channel) {
+            if (error1) {
+                throw error1;
+            }
+            channel.assertQueue(queue, { durable: true });
+            console.log(`[*] Waiting for messages in ${queue}. To exit press CTRL+C`);
 
-    const queue = 'kassa_queue';
-    await channel.assertQueue(queue, { durable: true });
+            channel.consume(queue, function (msg) {
+                console.log(" [x] Received", msg.content.toString());
+                // Process the received XML data here
 
-    console.log(" [*] Waiting for messages. To exit press CTRL+W");
-
-    channel.consume(queue, function (message) {
-        const content = message.content.toString();
-        console.log(" [x] Received", content);
-        // Process the received XML data here
-
-        // Acknowledge the message
-        channel.ack(message);
-    }, { noAck: false });
+                // Acknowledge the message
+                channel.ack(msg);
+            }, {
+                noAck: false
+            });
+        });
+    });
 }
 
-consumeMessages('kassa_queue').catch(console.error);
+consumeMessages('heartbeat_queue');

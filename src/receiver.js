@@ -17,8 +17,8 @@ async function isConsumerRunning() {
 async function sendHeartbeat(channel) {
     const serviceName = 'facturatie';
     const timestamp = Math.floor(Date.now() / 1000);
-    const isConsumerRunning = await isConsumerRunning();
-    const error = isConsumerRunning ? '' : ' consumer script is not running';
+    const isRunning = await isConsumerRunning(); // Changed variable name to avoid conflict
+    const error = isRunning ? '' : ' consumer script is not running'; // Use the new variable name
     const status = 200;
     const xmlData = `
         <heartbeat>
