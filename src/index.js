@@ -10,7 +10,6 @@ function main(timestamp) {
         level: 'info',
         timestamp: () => `,"time":"${new Date().toISOString()}"`
     });
-    
 
     const heartbeat_xml = `
     <Heartbeat>
@@ -69,11 +68,6 @@ function main(timestamp) {
             
             channel.sendToQueue(queue, Buffer.from(xml_doc));
             console.log('Message sent');
-
-            setTimeout(function () {
-                connection.close();
-                process.exit(0);
-            }, 500);
         });
     });
 }
@@ -83,10 +77,9 @@ function sendHeartbeat() {
         main(DateTime.now());
     } catch (error) {
         console.error('Error:', error);
-        process.exit(1);
     } finally {
-        // Call sendHeartbeat again after 5 seconds
-        setTimeout(sendHeartbeat, 5000);
+        // Call sendHeartbeat again after 1 seconds (1000 milliseconds)
+        setTimeout(sendHeartbeat, 1000);
     }
 }
 
