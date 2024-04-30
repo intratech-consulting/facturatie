@@ -12,6 +12,7 @@
   "dependencies": {
     "amqplib": "^0.10.4",
     "luxon": "^3.4.4",
-    "pino": "^9.0.0"
+    "pino": "^9.0.0",
+    "xmlbuilder": "^15.1.1"
   }
 }
