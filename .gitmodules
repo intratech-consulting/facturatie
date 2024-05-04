@@ -1,0 +1,3 @@
+[submodule "FOSSBilling"]
+    path = FOSSBilling
+    url = git://github.com/FOSSBilling/FOSSBilling.git
