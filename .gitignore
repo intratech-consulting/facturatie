@@ -1,3 +1,7 @@
 src/package-lock.json/
 src/package.json/
 node_modules/
+phptest/
+composer.lock
+composer.json
+vendor/

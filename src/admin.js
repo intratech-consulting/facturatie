@@ -1,35 +1,44 @@
 const axios = require("axios");
+const BoxBillingService = require("./bbService");
 require("dotenv").config();
 
 
 class admin {
+
     constructor() {
-        this.apiUrl = process.env.API_URL_ADMIN;
-        this.key = process.env.API_KEY;
+        this.bbService = new BoxBillingService({
+            api_role: 'admin',
+            api_token: process.env.API_KEY,
+            api_url: process.env.API_URL_ADMIN,
+        });
     }
 
     async createClient(userData) {
         // userData is a JSON object, containing user data like in draft.xml
-        // Send a POST request to the Fossbilling API to create a new client
-        // http://10.2.160.51:876/admin/client/create
 
+        // Using only the required fields for now
         const clientData = {
-            email: userData.email[0],
-            first_name: userData.first_name[0],
+            email: "test@email.com",
+            first_name: "test",
+            last_name: "testing",
+            status: `active`,
+            group_id: "",
+            company: "",
+            address_1: "",
+            address_2: "",
+            city: "",
+            state: "",
+            country: "",
+            postcode: "",
+            phone_cc: "",
+            phone: "",
+            currency: "",
             password: `Test1234`,
-            status: `active`
         };
 
-        const auth = Buffer.from(`admin:${this.key}`).toString('base64');
-
         try {
-            const response = await axios.post(`${this.apiUrl}/client/create`, clientData, {
-                headers: {
-                    'Authorization': `Basic ${auth}`
-                }
-            });
-
-            return response.data;
+            const response = await this.bbService.callMethod('client_create', [clientData]);
+            return response;
         } catch (error) {
             console.error(`Error creating client: ${error}`);
             throw error;
