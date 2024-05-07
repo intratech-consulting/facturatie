@@ -1,11 +1,27 @@
+version: "3.8"
+
 services:
+  heartbeat-service:
+    container_name: heartbeat-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./../src/heartbeat.js:/app/heartbeat.js
+    environment:
+      - RABBITMQ_USER=user
+      - RABBITMQ_PASSWORD=password
+      - RABBITMQ_HOST=10.2.160.51
+    restart: always
+
   fossbilling:
     image: fossbilling/fossbilling:latest
     restart: always
     ports:
-      - 876:80
+      - "876:80"
     volumes:
       - fossbilling:/var/www/html
+
   mysql:
     image: mysql:8.2
     restart: always
@@ -13,12 +29,12 @@ services:
       MYSQL_DATABASE: fossbilling
       MYSQL_USER: fossbilling
       MYSQL_PASSWORD: fossbillingPassword123$
-      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
     volumes:
       - mysql:/var/lib/mysql
+
 volumes:
   fossbilling:
     driver: local
   mysql:
     driver: local
-
