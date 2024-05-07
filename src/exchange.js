@@ -1,8 +1,5 @@
 const amqp = require('amqplib/callback_api');
 const dotenv = require('dotenv');
-const receiverCallback = require('./consumer.js'); // Importeer receiverCallback-module
-
-
 
 // Load environment variables from .env file
 dotenv.config();
@@ -19,7 +16,7 @@ function receiveMessage(queue, bindingKeys) {
                 throw error1;
             }
             console.log('Channel created');
-            const exchangeName = 'Intratech_exchange';
+            const exchangeName = "amq.topic";
 
             // Declare a topic exchange / Create a topic exchange
             channel.assertExchange(exchangeName, 'topic', { durable: true });
@@ -48,5 +45,5 @@ function receiveMessage(queue, bindingKeys) {
     });
 }
 
-const bindingKeys = ['user', 'order'];
-receiveMessage('facturatie', bindingKeys);
+const bindingKeys = ['user', 'consumptie'];
+receiveMessage('inventory_queue', bindingKeys);

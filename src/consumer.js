@@ -27,4 +27,4 @@ function consumeMessages(queue) {
     });
 }
 
-consumeMessages('crm');
+consumeMessages('user');

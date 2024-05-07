@@ -31,7 +31,7 @@ function sendHeartbeat(channel) {
                 </extra>
             </heartbeat>`;
         
-        channel.sendToQueue('crm', Buffer.from(xmlData));
+        channel.sendToQueue('user', Buffer.from(xmlData));
         console.log(' [x] Sent Heartbeat');
     }).catch(error => {
         console.error('Error checking if consumer is running:', error);
@@ -49,7 +49,7 @@ function connectAndSendHeartbeat() {
             if (error1) {
                 throw error1;
             }
-            channel.assertQueue('crm', { durable: true });
+            channel.assertQueue('user', { durable: true });
             console.log(' [*] Waiting for messages. To exit press CTRL+C\n');
 
             setInterval(() => {
@@ -58,5 +58,7 @@ function connectAndSendHeartbeat() {
         });
     });
 }
+
+
 
 connectAndSendHeartbeat();
