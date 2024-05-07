@@ -69,8 +69,8 @@ async function test_createClient() {
         console.log(jsonUserData.user.first_name[0])
         console.log(jsonUserData.user.email[0])
         const response = await admin.createClient(jsonUserData.user);
-        const responseData = await response.json();
-        logToFile(JSON.stringify(responseData, null, 2));
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("cliented created", response);
     } catch (error) {
         console.error("Error in test_createClient:", error);
         // Log detailed error information to the file

@@ -2,9 +2,7 @@ const axios = require("axios");
 const BoxBillingService = require("./bbService");
 require("dotenv").config();
 
-
 class admin {
-
     constructor() {
         this.bbService = new BoxBillingService({
             api_role: 'admin',
@@ -14,14 +12,11 @@ class admin {
     }
 
     async createClient(userData) {
-        // userData is a JSON object, containing user data like in draft.xml
-
-        // Using only the required fields for now
         const clientData = {
-            email: "test@email.com",
+            email: userData.email[0],
             first_name: "test",
-            last_name: "testing",
-            status: `active`,
+            last_name: "",
+            status: "active",
             group_id: "",
             company: "",
             address_1: "",
@@ -33,7 +28,7 @@ class admin {
             phone_cc: "",
             phone: "",
             currency: "",
-            password: `Test1234`,
+            password: "Test1234",
         };
 
         try {
@@ -46,16 +41,12 @@ class admin {
     };
 
     async deleteClient(clientId) {
-        // Send a DELETE request to the Fossbilling API to delete a client
-        // http://10.2.160.51:876/admin/client/delete/
-        // uses client_id as parameter
-
         try {
             const response = await axios.delete(
-                `${this.apiUrl}/client/delete/${clientId}`,
+                `${this.bbService.apiUrl}/client/delete/${clientId}`,
                 {
                     headers: {
-                        "API-Key": this.key,
+                        "API-Key": this.bbService.apiToken,
                     },
                 }
             );
