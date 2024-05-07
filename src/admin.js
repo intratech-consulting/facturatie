@@ -12,25 +12,27 @@ class admin {
     }
 
     async createClient(userData) {
-        const clientData = {
-            email: userData.email[0],
-            first_name: "test",
-            last_name: "",
-            status: "active",
-            group_id: "",
-            company: "",
-            address_1: "",
-            address_2: "",
-            city: "",
-            state: "",
-            country: "",
-            postcode: "",
-            phone_cc: "",
-            phone: "",
-            currency: "",
-            password: "Test1234",
-        };
+        const address = userData.address && userData.address[0] || {};
 
+        const clientData = {
+            email: userData.email && userData.email[0] || "test@mail.com",
+            first_name: userData.first_name && userData.first_name[0] || "Test",
+            last_name: userData.last_name && userData.last_name[0] || "",
+            status: "active",
+            group_id: userData.group_id && userData.group_id[0] || "",
+            company: userData.company && userData.company[0] || "",
+            address_1: address.street && address.street[0] && address.house_number && address.house_number[0] || "",
+            address_2: "",
+            city: address.city && address.city[0] || "",
+            state: address.state && address.state[0] || "",
+            country: address.country && address.country[0] || "",
+            postcode: address.zip && address.zip[0] || "",
+            phone_cc: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(0, 3) || "",
+            phone: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(3) || "",
+            currency: "",
+            password: userData.first_name && userData.first_name[0] && userData.last_name && userData.last_name[0] && `${userData.first_name[0]}${userData.last_name[0]}Pass1234` || "Test1234"
+        };
+    
         try {
             const response = await this.bbService.callMethod('client_create', [clientData]);
             return response;
@@ -42,16 +44,8 @@ class admin {
 
     async deleteClient(clientId) {
         try {
-            const response = await axios.delete(
-                `${this.bbService.apiUrl}/client/delete/${clientId}`,
-                {
-                    headers: {
-                        "API-Key": this.bbService.apiToken,
-                    },
-                }
-            );
-
-            return response.data;
+            const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
+            return response;
         } catch (error) {
             console.error(`Error deleting client: ${error}`);
             throw error;

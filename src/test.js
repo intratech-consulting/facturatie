@@ -31,7 +31,7 @@ async function test_xmlToJson() {
         <telephone>+32467179912</telephone>
         <birthday>2024-04-14</birthday>
         <address>
-                <country>Belgium</country>
+                <country>BE</country>
                 <state>Brussels</state>
                 <city>Brussels</city>
                 <zip>1000</zip>
@@ -68,9 +68,11 @@ async function test_createClient() {
         // Correct the URL if it's being constructed dynamically here
         console.log(jsonUserData.user.first_name[0])
         console.log(jsonUserData.user.email[0])
+        console.log(jsonUserData.user.address)
         const response = await admin.createClient(jsonUserData.user);
         logToFile(JSON.stringify(response, null, 2));
         console.log("cliented created", response);
+        return response
     } catch (error) {
         console.error("Error in test_createClient:", error);
         // Log detailed error information to the file
@@ -79,12 +81,30 @@ async function test_createClient() {
     }
 }
 
+async function test_deleteClient(clientID) {
+    try {
+        const response = await admin.deleteClient(clientID);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("cliented deleted", response);
+    } catch (error) {
+        console.error("Error in test_deleteClient:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error deleting client: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
 // functie om de testen uit te voeren
 async function runTests() {
     // await test_xmlToJson();
     // await test_jsonToXml();
-    await test_createClient();
-    // await test_deleteClient();
+    clientID = await test_createClient();
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    await test_deleteClient(clientID);
 };
 
 runTests().then(() => process.exit());
