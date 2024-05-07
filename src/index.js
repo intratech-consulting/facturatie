@@ -81,7 +81,7 @@ function consumeKassa(connection) {
       throw error1;
     }
     console.log("Channel created"); // Add this line to log successful channel creation
-    const queue = "kassa_queue"; // TODO: Insert correct queue name
+    const queue = "kassa"; 
     try {
       channel.assertQueue(queue, { durable: true });
     } catch (error) {
