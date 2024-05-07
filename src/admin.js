@@ -21,7 +21,7 @@ class admin {
             status: "active",
             group_id: userData.group_id && userData.group_id[0] || "",
             company: userData.company && userData.company[0] || "",
-            address_1: address.street && address.street[0] && address.house_number && address.house_number[0] || "",
+            address_1: `${address.street && address.street[0]} ${address.house_number && address.house_number[0]}` || "",
             address_2: "",
             city: address.city && address.city[0] || "",
             state: address.state && address.state[0] || "",
