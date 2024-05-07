@@ -5,3 +5,4 @@ phptest/
 composer.lock
 composer.json
 vendor/
+src/log.txt
