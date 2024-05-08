@@ -1,0 +1,105 @@
+"26"
+"27"
+"28"
+"29"
+Error creating client: Cannot read properties of undefined (reading 'toString')
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating order: jsonOrderData is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating client: Cannot read properties of undefined (reading 'toString')
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating order: jsonOrderData is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating client: Cannot read properties of undefined (reading 'toString')
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating order: jsonOrderData is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+"30"
+Error creating order: jsonOrderData is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+"31"
+"32"
+Error creating order: client_id and product_id are required
+URL: undefined
+Status: undefined
+Data: undefined
+"33"
+Error creating order: client_id and product_id are required
+URL: undefined
+Status: undefined
+Data: undefined
+"34"
+Error creating order: client_id and product_id are required
+URL: undefined
+Status: undefined
+Data: undefined
+"35"
+Error creating order: client_id and product_id are required
+URL: undefined
+Status: undefined
+Data: undefined
+"36"
+Error creating order: client_id and product_id are required
+URL: undefined
+Status: undefined
+Data: undefined
+"37"
+Error creating order: Cannot read properties of undefined (reading 'id')
+URL: undefined
+Status: undefined
+Data: undefined
+"38"
+Error creating order: Cannot read properties of undefined (reading 'id')
+URL: undefined
+Status: undefined
+Data: undefined
+"39"
+Error creating order: Cannot read properties of undefined (reading 'id')
+URL: undefined
+Status: undefined
+Data: undefined
+"40"
+Error creating order: client_id and product_id are required
+URL: undefined
+Status: undefined
+Data: undefined
+"41"
+Error creating order: client_id and product_id are required
+URL: undefined
+Status: undefined
+Data: undefined
+"42"
+Error creating order: client_id and product_id are required
+URL: undefined
+Status: undefined
+Data: undefined
+"43"
+Error creating order: BoxBilling API method "order_create" returned error: Product not found
+URL: undefined
+Status: undefined
+Data: undefined
+"44"
+Error creating order: BoxBilling API method "order_create" returned error: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'price' at row 1
+URL: undefined
+Status: undefined
+Data: undefined
+"45"
+4
+"46"
+5
+"47"
+6
