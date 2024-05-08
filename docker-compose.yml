@@ -1,13 +1,11 @@
-version: "3.8"
-
 services:
-  heartbeat-service:
-    container_name: heartbeat-container
+  facturatie:
+    container_name: facturatie-node
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
     volumes:
-      - ./../src/heartbeat.js:/app/heartbeat.js
+      - ./src:/app/src
     environment:
       - RABBITMQ_USER=user
       - RABBITMQ_PASSWORD=password
