@@ -2,6 +2,7 @@ const amqp = require("amqplib/callback_api");
 const fs = require("fs");
 const xmlbuilder = require("xmlbuilder");
 const { DateTime } = require("luxon");
+const { XMLParser, XMLBuilder, XMLValidator} = require("fast-xml-parser");
 
 const heartbeat_xsd = `
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -92,7 +93,8 @@ function consumeKassa(connection) {
       queue,
       function (msg) {
         const xml = msg.content.toString();
-        const parsed = xmlbuilder.create(xml);
+        const parser = new XMLParser();
+        let parsed = parser.parse(xml);
         // TODO: Xml2json
         // TODO: fossbilling API call
         // TODO: Json2xml

@@ -12,10 +12,11 @@
   "dependencies": {
     "amqplib": "^0.10.4",
     "axios": "^1.6.8",
-    "xml2js": "^0.6.2",
     "dotenv": "^16.4.5",
+    "fast-xml-parser": "^4.3.6",
     "luxon": "^3.4.4",
     "pino": "^9.0.0",
+    "xml2js": "^0.6.2",
     "xmlbuilder": "^15.1.1"
   }
 }
