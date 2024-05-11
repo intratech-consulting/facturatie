@@ -63,7 +63,9 @@ class BoxBillingService {
     }
 
     async callMethod(methodName, args) {
-        const [module, method] = methodName.split('_', 2);
+        const underscoreIndex = methodName.indexOf('_');
+        const module = methodName.substring(0, underscoreIndex);
+        const method = methodName.substring(underscoreIndex + 1);
         const data = args.length > 0 ? args[0] : {};
         return await this.callApi(module, method, data);
     }
