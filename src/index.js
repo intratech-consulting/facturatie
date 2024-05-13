@@ -148,32 +148,10 @@ async function createUser(user) {
   }
 }
 
-const testXml = `
-<order>
-    <routing_key>kassa.facturatie</routing_key>
-    <crud_operation>create</crud_operation>
-    <id>123</id>
-    <user_id>119</user_id>
-    <company_id>3210</company_id>
-    <products>
-        <product>
-            <product_id>987</product_id>
-            <name>Coca Cola</name>
-            <amount>5</amount>
-        </product>
-    </products>
-    <total_price>260.00</total_price>
-    <status>paid</status>
-</order>
-`
-
-const parsed = parser.parse(testXml);
-
 async function createOrder(uuid, order) {
   let clientId = null;
   try {
-    // clientId = await getClientIdByUuid(uuid);
-    clientId = 119;
+    clientId = await getClientIdByUuid(uuid);
   } catch (error) {
     logger.error(error);
     return;
@@ -218,4 +196,4 @@ async function sendHeartbeats(connection) {
   });
 }
 
-// main();
+main();
