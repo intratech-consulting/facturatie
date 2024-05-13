@@ -23,25 +23,22 @@ class admin {
         const password = userData.email && userData.email[0] || "test@mail.com"
 
         const clientData = {
-            email: userData.email && userData.email[0] || "test@mail.com",
-            first_name: userData.first_name && userData.first_name[0] || "Test",
-            last_name: userData.last_name && userData.last_name[0] || "",
+            email: userData.email || "test@mail.com",
+            first_name: userData.first_name || "Test",
+            last_name: userData.last_name || "",
             status: "active",
             company: userData.company_id && userData.company_id[0] || "",
             address_1: `${address.street && address.street[0]} ${address.house_number && address.house_number[0]}` || "",
             address_2: "",
-            city: address.city && address.city[0] || "",
-            state: address.state && address.state[0] || "",
-            country: address.country && address.country[0] || "",
-            postcode: address.zip && address.zip[0] || "",
-            phone_cc: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(0, 3) || "",
-            phone: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(3) || "",
+            city: address.city || "",
+            state: address.state || "",
+            country: address.country || "",
+            postcode: address.zip || "",
+            phone_cc: (userData.telephone + "").substring(0, 3) || "",
+            phone: userData.telephone || "",
             currency: "EUR" || userData.currency && userData.currency[0] || "",
             password: `${await this.enc.encryptString(password)}Pass1234`
         };
-
-        console.log(clientData.password)
-    
         try {
             const response = await this.bbService.callMethod('client_create', [clientData]);
             return response;
@@ -92,7 +89,6 @@ class admin {
             throw error;
         }
     }
-
     async getClient(clientId) {
         try {
             const response = await this.bbService.callMethod('client_get', [{ id: clientId }]);
@@ -102,7 +98,6 @@ class admin {
             throw error;
         }
     }
-    
 }
 
 module.exports = admin;
