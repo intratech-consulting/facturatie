@@ -44,7 +44,7 @@ async function getChannel(connection) {
 async function main() {
   const credentials = require("amqplib").credentials.plain("user", "password");
   amqp.connect(
-    "amqp://localhost:5672",
+    "amqp://10.2.160.53:5672",
     { credentials },
     function (error0, connection) {
       if (error0) {
@@ -78,6 +78,7 @@ async function setupUserConsumer(connection) {
           try {
             const clientId = await admin.createClient(user);
             await linkUuidToClientId(user.id, clientId);
+            logger.info(`Created client with id: ${clientId}`);
             channel.ack(msg);
           } catch (error) {
             logger.error(error);
