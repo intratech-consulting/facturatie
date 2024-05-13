@@ -44,7 +44,7 @@ async function getChannel(connection) {
 async function main() {
   const credentials = require("amqplib").credentials.plain("user", "password");
   amqp.connect(
-    "amqp://10.2.160.51",
+    "amqp://localhost:5672",
     { credentials },
     function (error0, connection) {
       if (error0) {
@@ -64,38 +64,41 @@ async function setupUserConsumer(connection) {
   const exchange = "amq.topic";
   const queue = system;
   const routing_key = "user." + system;
-  const publishing_queue = "user";
-  const publisher_routing_key = "user." + system;
   channel.assertExchange(exchange, "topic", { durable: true });
   channel.assertQueue(queue, { durable: true });
-  channel.assertQueue(publishing_queue, { durable: true });
-  channel.bindQueue(queue, exchange, routing_key);
+  logger.info(`Start consuming messages: ${queue}`);
   channel.consume(
     queue,
     async function (msg) {
+      logger.info(`Received message: ${msg.content.toString()}`);
       const object = parser.parse(msg.content.toString());
       const user = object.user;
-      if (user.routing_key != routing_key) {
-        return;
-      }
       switch (object.crud_operation) {
         case "create":
-          await createUser(user);
+          try {
+            const clientId = await admin.createClient(user);
+            await linkUuidToClientId(user.id, clientId);
+            channel.ack(msg);
+          } catch (error) {
+            logger.error(error);
+            channel.nack(msg);
+          }
           break;
         case "update":
-          break;
+          channel.ack(msg);
+          return;
         case "delete":
           // await deleteUser(user); // TODO: Needs Master UUID deletion method
-          break;
+          channel.ack(msg);
+          return;
       }
-      channel.ack(msg);
-      user.routing_key = publisher_routing_key;
       new_msg = xmlbuilder
         .create({
-          user
+          user,
         })
         .end({ pretty: true });
-      channel.sendToQueue(publishing_queue, Buffer.from(new_msg))
+      logger.info(`Publishing message: ${new_msg}`);
+      channel.publish(exchange, routing_key, Buffer.from(new_msg));
     },
     {
       noAck: false,
@@ -140,22 +143,6 @@ async function setupOrderConsumer(connection) {
       noAck: false,
     },
   );
-}
-
-async function createUser(user) {
-  let clientId = null;
-  try {
-    clientId = await admin.createClient(user);
-  } catch (error) {
-    logger.error(error);
-    return;
-  }
-  try {
-    await linkUuidToClientId(user.id, clientId);
-  } catch (error) {
-    admin.deleteClient(clientId);
-    logger.error(error);
-  }
 }
 
 async function createOrder(uuid, order) {

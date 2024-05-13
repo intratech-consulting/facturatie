@@ -9,7 +9,8 @@ services:
     environment:
       - RABBITMQ_USER=user
       - RABBITMQ_PASSWORD=password
-      - RABBITMQ_HOST=10.2.160.51
+      # - RABBITMQ_HOST=10.2.160.51
+      - RABBITMQ_HOST=127.0.0.1
     restart: always
 
   fossbilling:
