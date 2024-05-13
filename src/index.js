@@ -73,7 +73,7 @@ async function setupUserConsumer(connection) {
       logger.info(`Received message: ${msg.content.toString()}`);
       const object = parser.parse(msg.content.toString());
       const user = object.user;
-      switch (object.crud_operation) {
+      switch (user.crud_operation) {
         case "create":
           try {
             const clientId = await admin.createClient(user);
