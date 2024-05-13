@@ -2,7 +2,7 @@ const axios = require("axios");
 
 const serviceName = "facturatie";
 const port = 6000;
-const hostname = "10.2.160.51";
+const hostname = "10.2.160.53";
 const address = `http://${hostname}:${port}`;
 
 /*
