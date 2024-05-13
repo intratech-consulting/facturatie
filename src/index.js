@@ -54,7 +54,7 @@ async function main() {
       // Can go to default
       sendHeartbeats(connection);
       setupUserConsumer(connection);
-      setupOrderConsumer(connection);
+      // setupOrderConsumer(connection);
     },
   );
 }
@@ -64,8 +64,11 @@ async function setupUserConsumer(connection) {
   const exchange = "amq.topic";
   const queue = system;
   const routing_key = "user." + system;
+  const publishing_queue = "user";
+  const publisher_routing_key = "user." + system;
   channel.assertExchange(exchange, "topic", { durable: true });
   channel.assertQueue(queue, { durable: true });
+  channel.assertQueue(publishing_queue, { durable: true });
   channel.bindQueue(queue, exchange, routing_key);
   channel.consume(
     queue,
@@ -86,6 +89,13 @@ async function setupUserConsumer(connection) {
           break;
       }
       channel.ack(msg);
+      user.routing_key = publisher_routing_key;
+      new_msg = xmlbuilder
+        .create({
+          user
+        })
+        .end({ pretty: true });
+      channel.sendToQueue(publishing_queue, Buffer.from(new_msg))
     },
     {
       noAck: false,
