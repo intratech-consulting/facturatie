@@ -1,5 +1,6 @@
 const axios = require("axios");
 const BoxBillingService = require("./bbService");
+const Encryption = require("./encryption");
 require("dotenv").config();
 
 class admin {
@@ -7,8 +8,9 @@ class admin {
         this.bbService = new BoxBillingService({
             api_role: 'admin',
             api_token: process.env.API_KEY,
-            api_url: process.env.API_URL_ADMIN,
+            api_url: process.env.API_URL,
         });
+        this.enc = new Encryption();
     }
 
     async createClient(userData) {
@@ -18,15 +20,15 @@ class admin {
         }
 
         const address = userData.address && userData.address[0] || {};
+        const password = userData.email && userData.email[0] || "test@mail.com"
 
         const clientData = {
             email: userData.email || "test@mail.com",
             first_name: userData.first_name || "Test",
             last_name: userData.last_name || "",
             status: "active",
-            group_id: userData.company_id[0] || "",
-            company: userData.company_id|| "",
-            address_1: `${address.street} ${address.house_number && address.house_number[0]}` || "",
+            company: userData.company_id && userData.company_id[0] || "",
+            address_1: `${address.street && address.street[0]} ${address.house_number && address.house_number[0]}` || "",
             address_2: "",
             city: address.city || "",
             state: address.state || "",
@@ -35,9 +37,8 @@ class admin {
             phone_cc: (userData.telephone + "").substring(0, 3) || "",
             phone: userData.telephone || "",
             currency: "EUR" || userData.currency && userData.currency[0] || "",
-            password: userData.first_name && userData.first_name[0] && userData.last_name && userData.last_name[0] && `${userData.first_name[0]}${userData.last_name[0]}Pass1234` || "Test1234"
+            password: `${await this.enc.encryptString(password)}Pass1234`
         };
-
         try {
             const response = await this.bbService.callMethod('client_create', [clientData]);
             return response;
@@ -60,18 +61,18 @@ class admin {
     async createOrder(orderData, clientID = orderData.user_id) {
 
         // Check if required parameters are provided
-        if (!orderData.user_id || !orderData.products[0].product[0].id[0]) {
+        if (!orderData.user_id || !orderData.products[0].product[0].product_id[0]) {
             throw new Error('client_id and product_id are required');
         }
 
         // Prepare the data for the API call
         const data = {
             client_id: clientID,
-            product_id: orderData.products[0].product[0].id[0],
+            product_id: orderData.products[0].product[0].product_id[0],
             config: orderData.config || {},
             quantity: orderData.products[0].product[0].amount[0] || 1,
             price: orderData.total_price[0],
-            group_id: orderData.group_id || "",
+            company: orderData.company_id || "",
             currency: orderData.currency || "EUR" || "",
             title: orderData.products[0].product[0].name[0] || "Cola",
             activate: orderData.activate,
@@ -88,7 +89,15 @@ class admin {
             throw error;
         }
     }
-
+    async getClient(clientId) {
+        try {
+            const response = await this.bbService.callMethod('client_get', [{ id: clientId }]);
+            return response;
+        } catch (error) {
+            console.error(`Error getting client: ${error}`);
+            throw error;
+        }
+    }
 }
 
 module.exports = admin;

@@ -103,3 +103,764 @@ Data: undefined
 5
 "47"
 6
+"48"
+7
+{
+  "id": 48,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}
+"49"
+8
+{
+  "id": 49,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}
+"50"
+9
+{
+  "id": 50,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}
+Error getting cart: Cannot read properties of undefined (reading 'length')
+URL: undefined
+Status: undefined
+Data: undefined
+"51"
+10
+{
+  "id": 51,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}
+Error adding item to cart: BoxBilling API method "cart_add" returned error: Admin API call add does not exist in module cart
+URL: undefined
+Status: undefined
+Data: undefined
+Error getting cart: Cannot read properties of undefined (reading 'length')
+URL: undefined
+Status: undefined
+Data: undefined
+"52"
+11
+{
+  "id": 52,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}
+Error adding item to cart: BoxBilling API method "cart_add" returned error: Admin API call add does not exist in module cart
+URL: undefined
+Status: undefined
+Data: undefined
+Error getting cart: Cannot read properties of undefined (reading 'length')
+URL: undefined
+Status: undefined
+Data: undefined
+"53"
+12
+{
+  "id": 53,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}
+Error adding item to cart: BoxBilling API method "cart_add" returned error: Admin API call add does not exist in module cart
+URL: undefined
+Status: undefined
+Data: undefined
+Error getting cart: Cannot read properties of undefined (reading 'length')
+URL: undefined
+Status: undefined
+Data: undefined
+"54"
+13
+{
+  "id": 54,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}
+Error adding item to cart: BoxBilling API method "cart_add_item" returned error: Admin API call add_item n'existe pas dans le module cart
+URL: undefined
+Status: undefined
+Data: undefined
+Error getting cart: Cannot read properties of undefined (reading 'length')
+URL: undefined
+Status: undefined
+Data: undefined
+"55"
+14
+{
+  "id": 55,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}
+Error adding item to cart: BoxBilling API method "cart_add" returned error: Admin API call add does not exist in module cart
+URL: undefined
+Status: undefined
+Data: undefined
+Error getting cart: Cannot read properties of undefined (reading 'length')
+URL: undefined
+Status: undefined
+Data: undefined
+"56"
+15
+{
+  "id": 56,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}
+Error adding item to cart: BoxBilling API method "cart_add_item" returned error: Admin API call add_item does not exist in module cart
+URL: undefined
+Status: undefined
+Data: undefined
+Error getting cart: Cannot read properties of undefined (reading 'length')
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating client: BoxBilling API method "client_create" returned error: Password must include at least one uppercase letter.
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating order: BoxBilling API method "order_create" returned error: Client not found
+URL: undefined
+Status: undefined
+Data: undefined
+"57"
+16
+"58"
+17
+Error creating client: BoxBilling API method "client_create" returned error: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'a03Qy000004cOQUIA2' for column 'client_group_id' at row 1
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating order: Cannot read properties of undefined (reading '0')
+URL: undefined
+Status: undefined
+Data: undefined
+Error logging in client: email is required
+URL: undefined
+Status: undefined
+Data: undefined
+Error retrieving client: BoxBilling API method "client_get" returned error: Client ID or email is required
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating client: BoxBilling API method "client_create" returned error: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'a03Qy000004cOQUIA2' for column 'client_group_id' at row 1
+URL: undefined
+Status: undefined
+Data: undefined
+"59"
+Error creating order: Cannot read properties of undefined (reading '0')
+URL: undefined
+Status: undefined
+Data: undefined
+Error logging in client: email is required
+URL: undefined
+Status: undefined
+Data: undefined
+Error retrieving client: BoxBilling API method "client_get" returned error: Client ID or email is required
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating client: BoxBilling API method "client_create" returned error: This email address is already registered.
+URL: undefined
+Status: undefined
+Data: undefined
+"60"
+Error creating order: Cannot read properties of undefined (reading '0')
+URL: undefined
+Status: undefined
+Data: undefined
+Error creating client: BoxBilling API method "client_create" returned error: This email address is already registered.
+URL: undefined
+Status: undefined
+Data: undefined
+"61"
+Error creating order: Cannot read properties of undefined (reading '0')
+URL: undefined
+Status: undefined
+Data: undefined
+Error logging in client: email is required
+URL: undefined
+Status: undefined
+Data: undefined
+{
+  "id": 61,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 15:41:20",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 15:41:20"
+}
+"62"
+18
+{
+  "id": 62,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 16:05:11",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 16:05:11"
+}
+Error logging in client: Cannot read properties of undefined (reading 'email')
+URL: undefined
+Status: undefined
+Data: undefined
+"63"
+19
+{
+  "id": 63,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 16:08:05",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 16:08:05"
+}
+Error logging in client: Cannot read properties of undefined (reading 'email')
+URL: undefined
+Status: undefined
+Data: undefined
+"64"
+20
+{
+  "id": 64,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 16:33:51",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 16:33:51"
+}
+Error creating client: BoxBilling API method "client_create" returned error: This email address is already registered.
+URL: undefined
+Status: undefined
+Data: undefined
+"65"
+21
+{
+  "id": 65,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 16:35:22",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 16:35:22"
+}
+Error creating client: BoxBilling API method "client_create" returned error: This email address is already registered.
+URL: undefined
+Status: undefined
+Data: undefined
+"66"
+22
+{
+  "id": 66,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 16:36:10",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 16:36:10"
+}
+Error creating client: BoxBilling API method "client_create" returned error: This email address is already registered.
+URL: undefined
+Status: undefined
+Data: undefined
+"67"
+23
+{
+  "id": 67,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 17:11:00",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 17:11:00"
+}
+Error logging in client: userData is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+"68"
+24
+{
+  "id": 68,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 17:11:28",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 17:11:28"
+}
+Error logging in client: userData is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+"69"
+25
+{
+  "id": 69,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 17:11:45",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 17:11:45"
+}
+Error logging in client: Cannot read properties of undefined (reading 'email')
+URL: undefined
+Status: undefined
+Data: undefined
+"70"
+26
+{
+  "id": 70,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 17:13:46",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 17:13:46"
+}
+Error logging in client: encPassword is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+"71"
+27
+{
+  "id": 71,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 17:16:56",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 17:16:56"
+}
+Error logging in client: password is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+"72"
+28
+{
+  "id": 72,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 17:21:04",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 17:21:04"
+}
+Error logging in client: password is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+"73"
+29
+{
+  "id": 73,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 17:22:26",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 17:22:26"
+}
+Error logging in client: password is not defined
+URL: undefined
+Status: undefined
+Data: undefined
+"74"
+30
+{
+  "id": 74,
+  "aid": null,
+  "email": "john.doe@mail.com",
+  "email_approved": null,
+  "type": null,
+  "group_id": null,
+  "company": "a03Qy000004cOQUIA2",
+  "company_vat": null,
+  "company_number": null,
+  "first_name": "John",
+  "last_name": "Doe",
+  "gender": null,
+  "birthday": null,
+  "phone_cc": "32",
+  "phone": "467179912",
+  "address_1": "Nijverheidskaai 170",
+  "address_2": "",
+  "city": "Brussels",
+  "state": "Brussels",
+  "postcode": "1000",
+  "country": "BE",
+  "currency": "EUR",
+  "notes": null,
+  "created_at": "2024-05-11 17:26:24",
+  "document_nr": null,
+  "balance": null,
+  "auth_type": null,
+  "api_token": null,
+  "ip": null,
+  "status": "active",
+  "tax_exempt": 0,
+  "group": null,
+  "updated_at": "2024-05-11 17:26:24"
+}
+{
+  "id": 74,
+  "email": "john.doe@mail.com",
+  "name": "John Doe",
+  "role": "client"
+}

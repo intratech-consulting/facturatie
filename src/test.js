@@ -1,5 +1,7 @@
 const xmlHandling = require('./xmlHandling');
 const adminClass = require('./admin');
+const guestClass = require('./guest');
+
 const fs = require('fs');
 const path = require('path');
 const logFilePath = path.join(__dirname, 'log.txt');
@@ -7,6 +9,7 @@ const logFilePath = path.join(__dirname, 'log.txt');
 
 const xh = new xmlHandling();
 const admin = new adminClass();
+const guest = new guestClass();
 
 function logToFile(data, filename = logFilePath) {
     const message = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
@@ -20,48 +23,48 @@ function logToFile(data, filename = logFilePath) {
 }
 let userData = 
     `<user>
-        <user_id>1</user_id>
+        <routing_key>user.crm</routing_key>
+        <crud_operation>create</crud_operation>
+        <id>1238740192847</id>
         <first_name>John</first_name>
         <last_name>Doe</last_name>
         <email>john.doe@mail.com</email>
         <telephone>+32467179912</telephone>
         <birthday>2024-04-14</birthday>
         <address>
-                <country>BE</country>
-                <state>Brussels</state>
-                <city>Brussels</city>
-                <zip>1000</zip>
-                <street>Nijverheidskaai</street>
-                <house_number>170</house_number>
+            <country>BE</country>
+            <state>Brussels</state>
+            <city>Brussels</city>
+            <zip>1000</zip>
+            <street>Nijverheidskaai</street>
+            <house_number>170</house_number>
         </address>
         <company_email>john.doe@company.com</company_email>
-        <company_id>1</company_id>
-        <source></source>
-        <user_role></user_role>
-        <invoice></invoice>
+        <company_id>a03Qy000004cOQUIA2</company_id>
+        <source>salesforce</source>
+        <user_role>speaker</user_role>
+        <invoice>BE00 0000 0000 0000</invoice>
+        <calendar_link>www.example.com</calendar_link>
     </user>`;
 
 let orderData = 
     `<order>
-        <id>1</id>
-        <user_id>46</user_id>
-        <company_id>1</company_id>
+        <routing_key>order.crm</routing_key>
+        <crud_operation>create</crud_operation>
+        <id>123</id>
+        <user_id>0123</user_id>
+        <company_id>3210</company_id>
         <products>
             <product>
-                <id>3</id>
+                <product_id>3</product_id>
                 <name>Coca Cola</name>
-                <price>2.50</price>
-                <amount>3</amount>
-                <category>Soft drinks</category>
-                <total>7.5</total> <!-- hoeveelheid x prijs-->
-                <totalExBtw>6.19</totalExBtw>
-                <btw></btw>
+                <amount>5</amount>
             </product>
         </products>
         <total_price>260.00</total_price>
         <status>paid</status>
     </order>`;
-
+    
 async function test_xmlToJson(userData) {
     json = await xh.xmlToJson(userData);
     console.log(json);
@@ -122,11 +125,44 @@ async function test_createOrder(orderData, clientID = orderData.user_id) {
         console.log("order created", response);
     } catch (error) {
         console.error("Error in test_createOrder:", error);
+        console.log(jsonOrderData.products)
         // Log detailed error information to the file
         const errorMessage = `Error creating order: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
         logToFile(errorMessage);
     }
 }
+
+async function test_getClient(clientID) {
+    try {
+        const response = await admin.getClient(clientID);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("client retrieved", response);
+        return response; // Make sure to return the response
+    } catch (error) {
+        console.error("Error in test_getClient:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error retrieving client: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+async function test_loginClient(clientData) {
+    try {
+        if (!clientData) {
+            throw new Error("clientData is undefined");
+        }
+        const response = await guest.clientLogin(clientData);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("client logged in", response);
+    } catch (error) {
+        console.error("Error in test_loginClient:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error logging in client: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+
 
 // functie om de testen uit te voeren
 async function runTests() {
@@ -138,13 +174,38 @@ async function runTests() {
             resolve();
         });
     });
-    orderID = await test_createOrder(orderData, clientID);
+    await test_createOrder(orderData, clientID);
     await new Promise((resolve) => {
         process.stdin.once('data', () => {
             resolve();
         });
     });
+    clientData = await test_getClient(clientID);
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    await test_loginClient(clientData);
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    // await test_addItemToCart();
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
+    // await test_getCart();
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
     await test_deleteClient(clientID);
+    console.log("Tests completed");
 };
 
 runTests().then(() => process.exit());

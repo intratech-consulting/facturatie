@@ -6,3 +6,5 @@ vendor/
 package.json
 package-lock.json
 node_modules
+.env
+src/log.txt
