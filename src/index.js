@@ -77,8 +77,9 @@ async function setupUserConsumer(connection) {
         case "create":
           try {
             const clientId = await admin.createClient(user);
-            await linkUuidToClientId(user.id, clientId);
             logger.info(`Created client with id: ${clientId}`);
+            await linkUuidToClientId(user.id, clientId);
+            logger.info(`Linked UUID to client with id: ${clientId}`);
             channel.ack(msg);
           } catch (error) {
             logger.error(error);
