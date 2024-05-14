@@ -4,7 +4,7 @@ const xmlbuilder = require("xmlbuilder");
 const { DateTime } = require("luxon");
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const xml2js = require("xml2js");
-const Admin = require("./admin");
+const Admin = require("./fossbilling/admin");
 const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
 
 const heartbeat_xsd = `
