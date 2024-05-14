@@ -36,7 +36,7 @@ class admin {
             postcode: address.zip && address.zip[0] || "",
             phone_cc: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(0, 3) || "",
             phone: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(3) || "",
-            currency: "EUR" || userData.currency && userData.currency[0] || "",
+            currency: "EUR" || userData.currency && userData.currency[0] || "EUR",
             password: `${await this.enc.encryptString(password)}Pass1234`
         };
 
@@ -103,6 +103,25 @@ class admin {
         }
     }
     
+    async getCartList() {
+        try {
+            const response = await this.bbService.callMethod('cart_get_list', []);
+            return response;
+        } catch (error) {
+            console.error(`Error getting cart: ${error}`);
+            throw error;
+        }
+    }
+
+    async batchExpire() {
+        try {
+            const response = await this.bbService.callMethod('cart_batch_expire', []);
+            return response;
+        } catch (error) {
+            console.error(`Error expiring batch: ${error}`);
+            throw error;
+        }
+    }
 }
 
 module.exports = admin;

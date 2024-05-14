@@ -60,6 +60,11 @@ let orderData =
                 <name>Coca Cola</name>
                 <amount>5</amount>
             </product>
+            <product>
+                <product_id>4</product_id>
+                <name>Fanta</name>
+                <amount>7</amount>
+            </product>
         </products>
         <total_price>260.00</total_price>
         <status>paid</status>
@@ -151,6 +156,7 @@ async function test_loginClient(clientData) {
         if (!clientData) {
             throw new Error("clientData is undefined");
         }
+        
         const response = await guest.clientLogin(clientData);
         logToFile(JSON.stringify(response, null, 2));
         console.log("client logged in", response);
@@ -162,7 +168,60 @@ async function test_loginClient(clientData) {
     }
 }
 
+async function test_handleOrder(orderData) {
 
+    orderData = await test_xmlToJson(orderData);
+
+    try {
+        const response = await guest.handleOrder(orderData);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("order handled", response);
+    } catch (error) {
+        console.error("Error in test_handleOrder:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error handling order: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+async function test_getCart() {
+    try {
+        const response = await guest.getCart();
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("cart retrieved", response);
+    } catch (error) {
+        console.error("Error in test_getCart:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error retrieving cart: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+async function test_getCartList() {
+    try {
+        const response = await admin.getCartList();
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("cart list retrieved"/*, response*/);
+    } catch (error) {
+        console.error("Error in test_getCartList:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error retrieving cart list: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+async function test_batchExpire() { 
+    try {
+        const response = await admin.batchExpire();
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("batch expired", response);
+    } catch (error) {
+        console.error("Error in test_batchExpire:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error expiring batch: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
 
 // functie om de testen uit te voeren
 async function runTests() {
@@ -192,13 +251,24 @@ async function runTests() {
             resolve();
         });
     });
-    // await test_addItemToCart();
-    // await new Promise((resolve) => {
-    //     process.stdin.once('data', () => {
-    //         resolve();
-    //     });
-    // });
-    // await test_getCart();
+    await test_handleOrder(orderData);
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    await test_getCart();await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    await test_getCartList();
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    // await test_batchExpire();
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
     //         resolve();
