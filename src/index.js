@@ -1,31 +1,9 @@
 const amqp = require("amqplib");
-const fs = require("fs");
-const xmlbuilder = require("xmlbuilder");
-const { DateTime } = require("luxon");
-const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
-const xml2js = require("xml2js");
-const FossbillingAdmin = require("./fossbilling/admin");
-const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
 const { getLogger } = require("./logger");
 const setupUserConsumer = require("./user");
-
-const heartbeat_xsd = `
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="Heartbeat">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Timestamp" type="xs:dateTime" />
-                <xs:element name="Status" type="xs:string" />
-                <xs:element name="SystemName" type="xs:string" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-</xs:schema>
-`;
+const setupHeartbeats = require("./heartbeat");
 
 const logger = getLogger();
-const parser = new XMLParser();
-const fossbilling = new FossbillingAdmin();
 
 async function main() {
   const credentials = amqp.credentials.plain("user", "password");
@@ -33,7 +11,7 @@ async function main() {
     credentials,
   });
   logger.info("Connected to RabbitMQ");
-  await sendHeartbeats(connection);
+  await setupHeartbeats(connection);
   await setupUserConsumer(connection);
 }
 
@@ -91,32 +69,5 @@ async function main() {
 //     logger.error(error);
 //   }
 // }
-
-async function sendHeartbeats(connection) {
-  const channel = await connection.createChannel();
-  logger.info("Heartbeat channel created");
-  const queue = "heartbeat_queue";
-  try {
-    await channel.assertQueue(queue, { durable: true });
-    logger.info(`Asserted queue: ${queue}`);
-  } catch (error) {
-    logger.error(error);
-  }
-  // Set interval
-  setInterval(() => {
-    const timestamp = DateTime.now();
-    const xml_doc = xmlbuilder
-      .create({
-        Heartbeat: {
-          Timestamp: timestamp.toISO(),
-          Status: "Active",
-          SystemName: system,
-          ErrorLog: "",
-        },
-      })
-      .end({ pretty: true });
-    channel.sendToQueue(queue, Buffer.from(xml_doc));
-  }, 1000);
-}
 
 main();

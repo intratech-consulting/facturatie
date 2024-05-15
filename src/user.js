@@ -1,12 +1,18 @@
 const amqp = require("amqplib");
-const constants = require("./constants");
+const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
+
 const logger = require("./logger").getLogger();
+const FossbillingAdmin = require("./fossbilling/admin");
+const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
+const constants = require("./constants");
+
+const parser = new XMLParser();
+const fossbilling = new FossbillingAdmin();
 
 async function setupUserConsumer(connection) {
   const channel = await connection.createChannel();
   const exchange = "amq.topic";
   const queue = constants.SYSTEM;
-  const routing_key = "user." + constants.SYSTEM;
   await channel.assertExchange(exchange, "topic", { durable: true });
   logger.info(`Asserted exchange: ${exchange}`);
   await channel.assertQueue(queue, { durable: true });
@@ -39,13 +45,6 @@ async function setupUserConsumer(connection) {
           channel.ack(msg);
           return;
       }
-      new_msg = xmlbuilder
-        .create({
-          user,
-        })
-        .end({ pretty: true });
-      logger.info(`Publishing message: ${new_msg}`);
-      channel.publish(exchange, routing_key, Buffer.from(new_msg));
     },
     {
       noAck: false,
