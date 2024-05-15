@@ -1,10 +1,10 @@
-const amqp = require("amqplib/callback_api");
+const amqp = require("amqplib");
 const fs = require("fs");
 const xmlbuilder = require("xmlbuilder");
 const { DateTime } = require("luxon");
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const xml2js = require("xml2js");
-const Admin = require("./fossbilling/admin");
+const FossbillingAdmin = require("./fossbilling/admin");
 const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
 
 const heartbeat_xsd = `
@@ -22,50 +22,32 @@ const heartbeat_xsd = `
 `;
 
 const parser = new XMLParser();
-const admin = new Admin();
+const fossbilling = new FossbillingAdmin();
 const system = "facturatie";
-
 const logger = require("pino")({
   level: "info",
   timestamp: () => `,"time":"${new Date().toISOString()}"`,
 });
 
-async function getChannel(connection) {
-  return new Promise((resolve, reject) => {
-    connection.createChannel(function (error1, channel) {
-      if (error1) {
-        reject(error1);
-      }
-      resolve(channel);
-    });
-  });
-}
-
 async function main() {
-  const credentials = require("amqplib").credentials.plain("user", "password");
-  amqp.connect(
-    "amqp://10.2.160.53:5672",
-    { credentials },
-    function (error0, connection) {
-      if (error0) {
-        throw error0;
-      }
-      console.log("Connected to RabbitMQ"); // Add this line to log successful connection
-      // Can go to default
-      sendHeartbeats(connection);
-      setupUserConsumer(connection);
-      // setupOrderConsumer(connection);
-    },
-  );
+  const credentials = amqp.credentials.plain("user", "password");
+  const connection = await amqp.connect("amqp://10.2.160.51:5672", {
+    credentials,
+  });
+  logger.info("Connected to RabbitMQ");
+  await sendHeartbeats(connection);
+  await setupUserConsumer(connection);
 }
 
 async function setupUserConsumer(connection) {
-  const channel = await getChannel(connection);
+  const channel = await connection.createChannel();
   const exchange = "amq.topic";
   const queue = system;
   const routing_key = "user." + system;
-  channel.assertExchange(exchange, "topic", { durable: true });
-  channel.assertQueue(queue, { durable: true });
+  await channel.assertExchange(exchange, "topic", { durable: true });
+  logger.info(`Asserted exchange: ${exchange}`);
+  await channel.assertQueue(queue, { durable: true });
+  logger.info(`Asserted queue: ${queue}`);
   logger.info(`Start consuming messages: ${queue}`);
   channel.consume(
     queue,
@@ -76,7 +58,7 @@ async function setupUserConsumer(connection) {
       switch (user.crud_operation) {
         case "create":
           try {
-            const clientId = await admin.createClient(user);
+            const clientId = await fossbilling.createClient(user);
             logger.info(`Created client with id: ${clientId}`);
             await linkUuidToClientId(user.id, clientId);
             logger.info(`Linked UUID to client with id: ${clientId}`);
@@ -108,91 +90,86 @@ async function setupUserConsumer(connection) {
   );
 }
 
-async function setupOrderConsumer(connection) {
-  const channel = await getChannel(connection);
-  const exchange = "amq.topic";
-  const queue = "inventory"; // TODO: Fix queue and routing key
-  const routing_key = queue + ".facturatie";
-  channel.assertExchange(exchange, "topic", { durable: true });
-  channel.assertQueue(queue, { durable: true });
-  channel.bindQueue(queue, exchange, routing_key);
-  channel.consume(
-    queue,
-    async function (msg) {
-      const parser = new XMLParser();
-      const object = parser.parse(msg.content.toString());
-      const order = object.order;
-      if (order.routing_key != routing_key) {
-        console.log(
-          "Routing key does not match: ",
-          order.routing_key,
-          routing_key,
-        );
-        return;
-      }
-      switch (object.crud_operation) {
-        case "create":
-          await createOrder(order);
-          break;
-        case "update":
-          break;
-        case "delete":
-          break;
-      }
-      channel.ack(msg);
-    },
-    {
-      noAck: false,
-    },
-  );
-}
-
-async function createOrder(uuid, order) {
-  let clientId = null;
-  try {
-    clientId = await getClientIdByUuid(uuid);
-  } catch (error) {
-    logger.error(error);
-    return;
-  }
-  order.client_id = clientId;
-  try {
-    await admin.createOrder(order);
-  } catch (error) {
-    logger.error(error);
-  }
-}
+// async function setupOrderConsumer(connection) {
+//   const channel = await getChannel(connection);
+//   const exchange = "amq.topic";
+//   const queue = "inventory"; // TODO: Fix queue and routing key
+//   const routing_key = queue + ".facturatie";
+//   channel.assertExchange(exchange, "topic", { durable: true });
+//   channel.assertQueue(queue, { durable: true });
+//   channel.bindQueue(queue, exchange, routing_key);
+//   channel.consume(
+//     queue,
+//     async function (msg) {
+//       const parser = new XMLParser();
+//       const object = parser.parse(msg.content.toString());
+//       const order = object.order;
+//       if (order.routing_key != routing_key) {
+//         console.log(
+//           "Routing key does not match: ",
+//           order.routing_key,
+//           routing_key,
+//         );
+//         return;
+//       }
+//       switch (object.crud_operation) {
+//         case "create":
+//           await createOrder(order);
+//           break;
+//         case "update":
+//           break;
+//         case "delete":
+//           break;
+//       }
+//       channel.ack(msg);
+//     },
+//     {
+//       noAck: false,
+//     },
+//   );
+// }
+//
+// async function createOrder(uuid, order) {
+//   let clientId = null;
+//   try {
+//     clientId = await getClientIdByUuid(uuid);
+//   } catch (error) {
+//     logger.error(error);
+//     return;
+//   }
+//   order.client_id = clientId;
+//   try {
+//     await fossbilling.createOrder(order);
+//   } catch (error) {
+//     logger.error(error);
+//   }
+// }
 
 async function sendHeartbeats(connection) {
-  connection.createChannel(function (error1, channel) {
-    if (error1) {
-      throw error1;
-    }
-    console.log("Channel created"); // Add this line to log successful channel creation
-    const queue = "heartbeat_queue";
-    try {
-      channel.assertQueue(queue, { durable: true });
-      console.log("Queue asserted");
-    } catch (error) {
-      console.error("Error asserting queue:", error.message);
-      // Handle the error gracefully, for example, by logging it or retrying with different parameters.
-    }
-    // Set interval
-    setInterval(() => {
-      const timestamp = DateTime.now();
-      const xml_doc = xmlbuilder
-        .create({
-          Heartbeat: {
-            Timestamp: timestamp.toISO(),
-            Status: "Active",
-            SystemName: system,
-            ErrorLog: "",
-          },
-        })
-        .end({ pretty: true });
-      channel.sendToQueue(queue, Buffer.from(xml_doc));
-    }, 1000);
-  });
+  const channel = await connection.createChannel();
+  logger.info("Heartbeat channel created");
+  const queue = "heartbeat_queue";
+  try {
+    await channel.assertQueue(queue, { durable: true });
+    logger.info(`Asserted queue: ${queue}`);
+  } catch (error) {
+    logger.error(error);
+  }
+  // Set interval
+  setInterval(() => {
+    const timestamp = DateTime.now();
+    const xml_doc = xmlbuilder
+      .create({
+        Heartbeat: {
+          Timestamp: timestamp.toISO(),
+          Status: "Active",
+          SystemName: system,
+          ErrorLog: "",
+        },
+      })
+      .end({ pretty: true });
+    channel.sendToQueue(queue, Buffer.from(xml_doc));
+  }, 1000);
 }
 
 main();
