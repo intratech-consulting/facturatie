@@ -55,12 +55,12 @@ jobs:
           git checkout dev
           git pull
           echo -e "
-          RABBITMQ_URL=${{ secrets.DEV_RABBITMQ_URL }}
-          RABBITMQ_USER=${{ secrets.DEV_RABBITMQ_USER }}
-          RABBITMQ_PASS=${{ secrets.DEV_RABBITMQ_PASS }}
-          API_KEY=${{ secrets.DEV_API_KEY }}
-          API_URL=${{ secrets.DEV_API_URL }}
-          HASH_KEY=${{ secrets.DEV_HASH_KEY }}
+          RABBITMQ_URL=${{ secrets.RABBITMQ_URL }}
+          RABBITMQ_USER=${{ secrets.RABBITMQ_USER }}
+          RABBITMQ_PASS=${{ secrets.RABBITMQ_PASS }}
+          API_KEY=${{ secrets.API_KEY }}
+          API_URL=${{ secrets.API_URL }}
+          HASH_KEY=${{ secrets.HASH_KEY }}
           " > .env
           docker compose up --build -d
           ENDSSH
