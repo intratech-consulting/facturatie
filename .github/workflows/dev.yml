@@ -23,13 +23,10 @@ jobs:
           ssh-add ~/private_key
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Check if latest image exists
         id: check_latest_image
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
+          ssh -v -o StrictHostKeyChecking=no -o IdentityFile=~/private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
           if docker image inspect facturatie-facturatie:latest &> /dev/null; then
             echo '::set-output name=image_exists::true'
           else
@@ -40,14 +37,14 @@ jobs:
       - name: Backup previous state
         if: steps.check_latest_image.outputs.image_exists == 'true'
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
+          ssh -v -o StrictHostKeyChecking=no -o IdentityFile=~/private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
           cd ${{ env.APP_REPOSITORY_DIR }}
           docker tag facturatie-facturatie:latest facturatie-facturatie:backup
           ENDSSH
 
       - name: Deploy new version
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
+          ssh -v -o StrictHostKeyChecking=no -o IdentityFile=~/private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
           eval $(ssh-agent)
           ssh-add ~/.ssh/github_intratechconsulting
           cd ${{ env.APP_REPOSITORY_DIR }}
@@ -68,7 +65,7 @@ jobs:
       - name: Check deployment status
         id: check_status
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
+          ssh -v -o StrictHostKeyChecking=no -o IdentityFile=~/private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
           cd ${{ env.APP_REPOSITORY_DIR }}
           docker compose ps | grep facturatie-facturatie
           ENDSSH
@@ -76,7 +73,7 @@ jobs:
       - name: Rollback on failure
         if: steps.check_status.outcome != 'success'
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
+          ssh -v -o StrictHostKeyChecking=no -o IdentityFile=~/private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<'ENDSSH'
           cd ${{ env.APP_REPOSITORY_DIR }}
           docker-compose down
           docker run -d --name restored_container facturatie-facturatie:backup
