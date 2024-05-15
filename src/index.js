@@ -7,6 +7,7 @@ const xml2js = require("xml2js");
 const FossbillingAdmin = require("./fossbilling/admin");
 const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
 const { getLogger } = require("./logger");
+const setupUserConsumer = require("./user");
 
 const heartbeat_xsd = `
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -25,7 +26,6 @@ const heartbeat_xsd = `
 const logger = getLogger();
 const parser = new XMLParser();
 const fossbilling = new FossbillingAdmin();
-const system = "facturatie";
 
 async function main() {
   const credentials = amqp.credentials.plain("user", "password");
@@ -35,57 +35,6 @@ async function main() {
   logger.info("Connected to RabbitMQ");
   await sendHeartbeats(connection);
   await setupUserConsumer(connection);
-}
-
-async function setupUserConsumer(connection) {
-  const channel = await connection.createChannel();
-  const exchange = "amq.topic";
-  const queue = system;
-  const routing_key = "user." + system;
-  await channel.assertExchange(exchange, "topic", { durable: true });
-  logger.info(`Asserted exchange: ${exchange}`);
-  await channel.assertQueue(queue, { durable: true });
-  logger.info(`Asserted queue: ${queue}`);
-  logger.info(`Start consuming messages: ${queue}`);
-  channel.consume(
-    queue,
-    async function (msg) {
-      logger.info(`Received message: ${msg.content.toString()}`);
-      const object = parser.parse(msg.content.toString());
-      const user = object.user;
-      switch (user.crud_operation) {
-        case "create":
-          try {
-            const clientId = await fossbilling.createClient(user);
-            logger.info(`Created client with id: ${clientId}`);
-            await linkUuidToClientId(user.id, clientId);
-            logger.info(`Linked UUID to client with id: ${clientId}`);
-            channel.ack(msg);
-          } catch (error) {
-            logger.error(error);
-            channel.nack(msg);
-          }
-          break;
-        case "update":
-          channel.ack(msg);
-          return;
-        case "delete":
-          // await deleteUser(user); // TODO: Needs Master UUID deletion method
-          channel.ack(msg);
-          return;
-      }
-      new_msg = xmlbuilder
-        .create({
-          user,
-        })
-        .end({ pretty: true });
-      logger.info(`Publishing message: ${new_msg}`);
-      channel.publish(exchange, routing_key, Buffer.from(new_msg));
-    },
-    {
-      noAck: false,
-    },
-  );
 }
 
 // async function setupOrderConsumer(connection) {
