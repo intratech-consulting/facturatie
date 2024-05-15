@@ -6,6 +6,7 @@ const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const xml2js = require("xml2js");
 const FossbillingAdmin = require("./fossbilling/admin");
 const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
+const { getLogger } = require("./logger");
 
 const heartbeat_xsd = `
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -21,13 +22,10 @@ const heartbeat_xsd = `
 </xs:schema>
 `;
 
+const logger = getLogger();
 const parser = new XMLParser();
 const fossbilling = new FossbillingAdmin();
 const system = "facturatie";
-const logger = require("pino")({
-  level: "info",
-  timestamp: () => `,"time":"${new Date().toISOString()}"`,
-});
 
 async function main() {
   const credentials = amqp.credentials.plain("user", "password");
