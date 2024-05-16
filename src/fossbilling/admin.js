@@ -23,9 +23,9 @@ class admin {
         const password = userData.email && userData.email[0] || "test@mail.com"
 
         const clientData = {
-            email: userData.email && userData.email[0] || "test@mail.com",
-            first_name: userData.first_name && userData.first_name[0] || "Test",
-            last_name: userData.last_name && userData.last_name[0] || "",
+            email: userData.email || "test@mail.com",
+            first_name: userData.first_name || "Test",
+            last_name: userData.last_name || "",
             status: "active",
             company: userData.company_id && userData.company_id[0] || "",
             address_1: `${address.street && address.street[0]} ${address.house_number && address.house_number[0]}` || "",
@@ -39,9 +39,6 @@ class admin {
             currency: "EUR" || userData.currency && userData.currency[0] || "EUR",
             password: `${await this.enc.encryptString(password)}Pass1234`
         };
-
-        console.log(clientData.password)
-    
         try {
             const response = await this.bbService.callMethod('client_create', [clientData]);
             return response;
@@ -92,7 +89,6 @@ class admin {
             throw error;
         }
     }
-
     async getClient(clientId) {
         try {
             const response = await this.bbService.callMethod('client_get', [{ id: clientId }]);
