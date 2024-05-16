@@ -36,7 +36,7 @@ class admin {
             postcode: address.zip && address.zip[0] || "",
             phone_cc: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(0, 3) || "",
             phone: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(3) || "",
-            currency: "EUR" || userData.currency && userData.currency[0] || "EUR",
+            currency: "EUR",
             password: `${await this.enc.encryptString(password)}Pass1234`
         };
 
