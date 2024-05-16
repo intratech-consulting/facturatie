@@ -1,0 +1,10 @@
+node_modules/
+phptest/
+composer.lock
+composer.json
+vendor/
+package.json
+package-lock.json
+node_modules
+.env
+src/log.txt
