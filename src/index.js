@@ -1,6 +1,7 @@
 const amqp = require("amqplib");
 const { getLogger } = require("./logger");
 const setupUserConsumer = require("./user");
+const setupOrderConsumer = require("./order");
 const setupHeartbeats = require("./heartbeat");
 require("dotenv").config();
 
@@ -14,6 +15,7 @@ async function main() {
   logger.info("Connected to RabbitMQ");
   await setupHeartbeats(connection);
   await setupUserConsumer(connection);
+  await setupOrderConsumer(connection);
 }
 
 main();
