@@ -1,16 +1,7 @@
 const amqp = require("amqplib");
-const validator = require("xsd-schema-validator");
 const logger = require("./logger").getLogger();
 
-async function sendValidatedXML(xmlData, xsdData, routingKey) {
-  // XML and XSD validation
-  validator.validateXML(xmlData, xsdData, function (err, result) {
-    if (err) {
-      logger.error("Invalid XML data");
-      return;
-    }
-  });
-
+async function sendValidatedXML(xmlData, routingKey) {
   // Connect to RabbitMQ server
   const connection = await amqp.connect("amqp://localhost");
 

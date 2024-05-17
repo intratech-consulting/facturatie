@@ -19,7 +19,6 @@
     "pino": "^9.0.0",
     "tough-cookie": "^4.1.4",
     "xml2js": "^0.6.2",
-    "xmlbuilder": "^15.1.1",
-    "xsd-schema-validator": "^0.9.0"
+    "xmlbuilder": "^15.1.1"
   }
 }
