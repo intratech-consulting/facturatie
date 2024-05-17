@@ -3,8 +3,6 @@ const sendValidatedXML = require("./sendValidatedXML");
 const constants = require("./constants");
 
 async function sendLogEntry(functionName, logs, error) {
-  const xsdData = constants.LOG_XSD;
-
   // Create XML data
   const builder = new XMLBuilder("1.0", {
     ignoreAttributes: false,
@@ -26,7 +24,7 @@ async function sendLogEntry(functionName, logs, error) {
   const routingKey = "logs";
 
   // Send the validated XML
-  await sendValidatedXML(xmlData, xsdData, routingKey);
+  await sendValidatedXML(xmlData, routingKey);
 }
 
 module.exports = sendLogEntry;
