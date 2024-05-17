@@ -16,7 +16,7 @@ async function sendLogEntry(functionName, logs, error) {
         SystemName: constants.SYSTEM,
         FunctionName: functionName,
         Logs: logs,
-        Error: error,
+        Error: error ? "true" : "false",
         Timestamp: new Date().toISOString(), // Current timestamp
       },
     })
