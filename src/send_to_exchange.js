@@ -3,7 +3,7 @@ const logger = require("./logger").getLogger();
 
 async function sendValidatedXML(xmlData, routingKey) {
   // Connect to RabbitMQ server
-  const connection = await amqp.connect("amqp://localhost");
+  const connection = await amqp.connect("amqp://localhost:5672");
 
   // Create channel
   const channel = await connection.createChannel();
