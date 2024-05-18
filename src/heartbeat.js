@@ -1,31 +1,17 @@
 const xmlbuilder = require("xmlbuilder");
 const { DateTime } = require("luxon");
-const logger = require("./logger").getLogger();
+const logger = require("./logger").Logger.getLogger();
 const constants = require("./constants");
-
-const heartbeat_xsd = `
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="Heartbeat">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Timestamp" type="xs:dateTime" />
-                <xs:element name="Status" type="xs:string" />
-                <xs:element name="SystemName" type="xs:string" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-</xs:schema>
-`;
 
 async function setupHeartbeats(connection) {
   const channel = await connection.createChannel();
-  logger.info("Heartbeat channel created");
+  logger.log("setupHeartbeats", `Heartbeat channel created`, false);
   const queue = "heartbeat_queue";
   try {
     await channel.assertQueue(queue, { durable: true });
-    logger.info(`Asserted queue: ${queue}`);
+    logger.log("setupHeartbeats", `Asserted queue: ${queue}`, false);
   } catch (error) {
-    logger.error(error);
+    logger.log("setupHeartbeats", `Error asserting queue: ${queue}`, true);
   }
   // Set interval
   setInterval(() => {
