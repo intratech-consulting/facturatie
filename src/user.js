@@ -43,19 +43,36 @@ async function setupUserConsumer(connection) {
             logger.error(error);
             channel.nack(msg);
           }
-          break;
+          return;
         case "update":
+          try {
+            // const clientId = await getClientIdByUuid(user.id);
+            // logger.info(`Updating client with id: ${clientId}`);
+            // await fossbilling.updateClient(clientId, user); // TODO: <- Doesn't exist
+            // logger.info(`Updated client with id: ${clientId}`);
+          } catch (error) {
+            logger.error(error);
+            channel.nack(msg);
+          }
           channel.ack(msg);
           return;
         case "delete":
-          // await deleteUser(user); // TODO: Needs Master UUID deletion method
-          channel.ack(msg);
+          try {
+            const clientId = await getClientIdByUuid(user.id);
+            logger.info(`Deleting client with id: ${clientId}`);
+            fossbilling.deleteClient(clientId);
+            logger.info(`Deleted client with id: ${clientId}`);
+            channel.ack(msg);
+          } catch (error) {
+            logger.error(error);
+            channel.nack(msg);
+          }
           return;
       }
     },
     {
       noAck: false,
-    }
+    },
   );
 }
 
