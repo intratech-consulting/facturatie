@@ -1,6 +1,7 @@
 const xmlbuilder = require("xmlbuilder");
 const { DateTime } = require("luxon");
-const logger = require("./logger").Logger.getLogger();
+const Logger = require("./logger");
+const logger = Logger.getLogger();
 const constants = require("./constants");
 
 async function setupHeartbeats(connection) {

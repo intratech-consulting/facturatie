@@ -311,7 +311,7 @@ const ORDER_XSD = `
 
 module.exports = Object.freeze({
   SYSTEM: "facturatie",
-  MIAN_EXCHANGE: "amq.topic",
+  MAIN_EXCHANGE: "amq.topic",
   HEARTBEAT_XSD,
   LOG_XSD,
   USER_XSD,

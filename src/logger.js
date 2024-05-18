@@ -1,31 +1,22 @@
 const constants = require("./constants");
-
-let logger = null;
+const pino = require("pino");
 
 class Logger {
-  pinoLogger = null;
-  channel = null;
-  exchange = constants.MAIN_EXCHANGE;
-
   constructor() {
-    logger = require("pino")({
+    this.pinoLogger = pino({
       level: "info",
       timestamp: () => `,"time":"${new Date().toISOString()}"`,
     });
+    this.channel = null;
+    this.exchange = constants.MAIN_EXCHANGE;
   }
 
   async setupLogger(connection) {
     // Create channel
-    channel = await connection.createChannel();
-    await channel.assertExchange(this.exchange, "topic", {
+    this.channel = await connection.createChannel();
+    await this.channel.assertExchange(this.exchange, "topic", {
       durable: true,
     });
-
-    logger.info(`Sent validated XML data to topic: ${routingKey}`);
-
-    // Close channel and connection
-    await channel.close();
-    await connection.close();
   }
 
   async log(functionName, log, isError) {
@@ -38,14 +29,17 @@ class Logger {
         Timestamp: new Date().toISOString(), // Current timestamp
       },
     };
-    if (channel) {
-      channel.publish(exchange, "logs", Buffer.from(xmlData));
+    if (this.channel) {
+      this.channel.publish(this.exchange, "logs", Buffer.from(JSON.stringify(logData)));
     }
-    pinoLogger.info(logData);
+    this.pinoLogger.info(logData);
   }
 
   static getLogger() {
-    return logger;
+    if (!Logger.instance) {
+      Logger.instance = new Logger();
+    }
+    return Logger.instance;
   }
 }
 

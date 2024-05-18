@@ -1,10 +1,10 @@
 const amqp = require("amqplib");
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
-const logger = require("./logger").Logger.getLogger();
+const Logger = require("./logger");
+const logger = Logger.getLogger();
 const FossbillingAdmin = require("./fossbilling/admin");
 const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
 const constants = require("./constants");
-const sendLogEntry = require("./sendLogEntry"); // import the function
 
 const parser = new XMLParser();
 const fossbilling = new FossbillingAdmin();
