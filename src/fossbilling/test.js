@@ -41,7 +41,7 @@ let userData =
         </address>
         <company_email>john.doe@company.com</company_email>
         <company_id>a03Qy000004cOQUIA2</company_id>
-        <source>salesforce</source>
+        <source></source>
         <user_role>speaker</user_role>
         <invoice>BE00 0000 0000 0000</invoice>
         <calendar_link>www.example.com</calendar_link>
@@ -69,6 +69,33 @@ let orderData =
         <total_price>260.00</total_price>
         <status>paid</status>
     </order>`;
+
+
+let updateData = 
+    `<user>
+        <routing_key>user.crm</routing_key>
+        <crud_operation>update</crud_operation>
+        <id>1238740192847</id>
+        <first_name>Jane</first_name>
+        <last_name></last_name>
+        <email>jane.doe@mail.com</email>
+        <telephone></telephone>
+        <birthday></birthday>
+        <address>
+            <country>FR</country>
+            <state>Paris</state>
+            <city>Paris</city>
+            <zip></zip>
+            <street></street>
+            <house_number></house_number>
+        </address>
+        <company_email>john.doe@company.com</company_email>
+        <company_id>a03Qy000004cOQUIA2</company_id>
+        <source>salesforce</source>
+        <user_role>speaker</user_role>
+        <invoice>BE00 0000 0000 0000</invoice>
+        <calendar_link>www.example.com</calendar_link>
+    </user>`;
     
 async function test_xmlToJson(userData) {
     json = await xh.xmlToJson(userData);
@@ -119,6 +146,23 @@ async function test_deleteClient(clientID) {
         logToFile(errorMessage);
     }
 }
+
+async function test_updateClient(updateData, clientID = updateData.id) {
+    
+    const jsonUserData = await test_xmlToJson(updateData);
+
+    try {
+        const response = await admin.updateClient(jsonUserData.user, clientID);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("client updated", response);
+    } catch (error) {
+        console.error("Error in test_updateClient:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error updating client: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
 
 async function test_createOrder(orderData, clientID = orderData.user_id) {
 
@@ -263,6 +307,12 @@ async function runTests() {
         });
     });
     await test_getCartList();
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    await test_updateClient(updateData, clientID);
     await new Promise((resolve) => {
         process.stdin.once('data', () => {
             resolve();
