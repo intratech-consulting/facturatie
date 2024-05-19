@@ -41,10 +41,10 @@ async function setupUserConsumer(connection) {
           return;
         case "update":
           try {
-            // const clientId = await getClientIdByUuid(user.id);
-            // logger.info(`Updating client with id: ${clientId}`);
-            // await fossbilling.updateClient(clientId, user); // TODO: <- Doesn't exist
-            // logger.info(`Updated client with id: ${clientId}`);
+            const clientId = await getClientIdByUuid(user.id);
+            logger.info(`Updating client with id: ${clientId}`);
+            await fossbilling.updateClient(clientId, user); 
+            logger.info(`Updated client with id: ${clientId}`);
           } catch (error) {
             logger.log("setupUserConsumer", `Error during update - User UUID: ${user.id}.`, true);
             channel.nack(msg);
