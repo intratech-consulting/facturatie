@@ -1,7 +1,7 @@
 const amqp = require("amqplib");
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
-
-const logger = require("./logger").getLogger();
+const Logger = require("./logger");
+const logger = Logger.getLogger();
 const FossbillingAdmin = require("./fossbilling/admin");
 const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
 const constants = require("./constants");
@@ -13,37 +13,60 @@ async function setupUserConsumer(connection) {
   const channel = await connection.createChannel();
   const exchange = "amq.topic";
   const queue = constants.SYSTEM;
+
   await channel.assertExchange(exchange, "topic", { durable: true });
-  logger.info(`Asserted exchange: ${exchange}`);
+  logger.log("main", `Asserted exchange: ${exchange}`, false);
   await channel.assertQueue(queue, { durable: true });
-  logger.info(`Asserted queue: ${queue}`);
-  logger.info(`Start consuming messages: ${queue}`);
+  logger.log("main", `Asserted queue: ${queue}`, false);
+  logger.log("main", `Start consuming messages: ${queue}`, false);
   channel.consume(
     queue,
     async function (msg) {
-      logger.info(`Received message: ${msg.content.toString()}`);
+      logger.log("setupUserConsumer", `Received message: ${msg.content.toString()}`, false);
       const object = parser.parse(msg.content.toString());
       const user = object.user;
+
       switch (user.crud_operation) {
         case "create":
           try {
             const clientId = await fossbilling.createClient(user);
-            logger.info(`Created client with id: ${clientId}`);
+            logger.log("setupUserConsumer", `Created client with id: ${clientId}`, false);
             await linkUuidToClientId(user.id, clientId);
-            logger.info(`Linked UUID to client with id: ${clientId}`);
+            logger.log("setupUserConsumer", `Linked UUID to client with id: ${clientId}`, false);
             channel.ack(msg);
           } catch (error) {
-            logger.error(error);
+            logger.log("setupUserConsumer", `Error during creation - User UUID: ${user.id}.`, true);
             channel.nack(msg);
           }
-          break;
+          return;
         case "update":
+          try {
+            const clientId = await getClientIdByUuid(user.id);
+            logger.log("setupUserConsumer", `Updating client with id: ${clientId}`, false);
+            await fossbilling.updateClient(clientId, user);
+            logger.log("setupUserConsumer", `Updated client with id: ${clientId}`, false);
+            channel.ack(msg);
+          } catch (error) {
+            logger.log("setupUserConsumer", `Error during update - User UUID: ${user.id}.`, true);
+            channel.nack(msg);
+          }
           channel.ack(msg);
           return;
         case "delete":
-          // await deleteUser(user); // TODO: Needs Master UUID deletion method
-          channel.ack(msg);
+          try {
+            const clientId = await getClientIdByUuid(user.id);
+            logger.log("setupUserConsumer", `Deleting client with id: ${clientId}`, false);
+            fossbilling.deleteClient(clientId);
+            logger.log("setupUserConsumer", `Deleted client with id: ${clientId}`, false);
+            channel.ack(msg);
+          } catch (error) {
+            logger.log("setupUserConsumer", `Error during deletion - User UUID: ${user.id}.`, true);
+            channel.nack(msg);
+          }
           return;
+        default:
+          logger.log("setupUserConsumer", `Unknown operation: ${user.crud_operation}`, true);
+          channel.nack(msg);
       }
     },
     {

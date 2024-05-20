@@ -41,7 +41,7 @@ let userData =
         </address>
         <company_email>john.doe@company.com</company_email>
         <company_id>a03Qy000004cOQUIA2</company_id>
-        <source>salesforce</source>
+        <source></source>
         <user_role>speaker</user_role>
         <invoice>BE00 0000 0000 0000</invoice>
         <calendar_link>www.example.com</calendar_link>
@@ -60,10 +60,42 @@ let orderData =
                 <name>Coca Cola</name>
                 <amount>5</amount>
             </product>
+            <product>
+                <product_id>4</product_id>
+                <name>Fanta</name>
+                <amount>7</amount>
+            </product>
         </products>
         <total_price>260.00</total_price>
         <status>paid</status>
     </order>`;
+
+
+let updateData = 
+    `<user>
+        <routing_key>user.crm</routing_key>
+        <crud_operation>update</crud_operation>
+        <id>1238740192847</id>
+        <first_name>Jane</first_name>
+        <last_name></last_name>
+        <email>jane.doe@mail.com</email>
+        <telephone></telephone>
+        <birthday></birthday>
+        <address>
+            <country>FR</country>
+            <state>Paris</state>
+            <city>Paris</city>
+            <zip></zip>
+            <street></street>
+            <house_number></house_number>
+        </address>
+        <company_email>john.doe@company.com</company_email>
+        <company_id>a03Qy000004cOQUIA2</company_id>
+        <source>salesforce</source>
+        <user_role>speaker</user_role>
+        <invoice>BE00 0000 0000 0000</invoice>
+        <calendar_link>www.example.com</calendar_link>
+    </user>`;
     
 async function test_xmlToJson(userData) {
     json = await xh.xmlToJson(userData);
@@ -115,6 +147,23 @@ async function test_deleteClient(clientID) {
     }
 }
 
+async function test_updateClient(updateData, clientID = updateData.id) {
+    
+    const jsonUserData = await test_xmlToJson(updateData);
+
+    try {
+        const response = await admin.updateClient(jsonUserData.user, clientID);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("client updated", response);
+    } catch (error) {
+        console.error("Error in test_updateClient:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error updating client: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+
 async function test_createOrder(orderData, clientID = orderData.user_id) {
 
     const jsonOrderData = await test_xmlToJson(orderData);
@@ -151,6 +200,7 @@ async function test_loginClient(clientData) {
         if (!clientData) {
             throw new Error("clientData is undefined");
         }
+        
         const response = await guest.clientLogin(clientData);
         logToFile(JSON.stringify(response, null, 2));
         console.log("client logged in", response);
@@ -162,7 +212,60 @@ async function test_loginClient(clientData) {
     }
 }
 
+async function test_handleOrder(orderData) {
 
+    orderData = await test_xmlToJson(orderData);
+
+    try {
+        const response = await guest.handleOrder(orderData);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("order handled", response);
+    } catch (error) {
+        console.error("Error in test_handleOrder:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error handling order: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+async function test_getCart() {
+    try {
+        const response = await guest.getCart();
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("cart retrieved", response);
+    } catch (error) {
+        console.error("Error in test_getCart:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error retrieving cart: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+async function test_getCartList() {
+    try {
+        const response = await admin.getCartList();
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("cart list retrieved"/*, response*/);
+    } catch (error) {
+        console.error("Error in test_getCartList:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error retrieving cart list: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+async function test_batchExpire() { 
+    try {
+        const response = await admin.batchExpire();
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("batch expired", response);
+    } catch (error) {
+        console.error("Error in test_batchExpire:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error expiring batch: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
 
 // functie om de testen uit te voeren
 async function runTests() {
@@ -192,13 +295,30 @@ async function runTests() {
             resolve();
         });
     });
-    // await test_addItemToCart();
-    // await new Promise((resolve) => {
-    //     process.stdin.once('data', () => {
-    //         resolve();
-    //     });
-    // });
-    // await test_getCart();
+    await test_handleOrder(orderData);
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    await test_getCart();await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    await test_getCartList();
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    await test_updateClient(updateData, clientID);
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
+    // await test_batchExpire();
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
     //         resolve();

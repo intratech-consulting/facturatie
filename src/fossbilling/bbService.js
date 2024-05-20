@@ -1,4 +1,6 @@
 const axios = require('axios');
+const axiosCookieJarSupport = require('axios-cookiejar-support').default;
+const tough = require('tough-cookie');
 const fs = require('fs');
 const path = require('path');
 require("dotenv").config();
@@ -20,6 +22,7 @@ class BoxBillingService {
         this.apiRole = options.api_role || 'guest';
         this.apiToken = options.api_token || null;
         this.cookieFile = createCookieFile();
+        this.cookieJar = new tough.CookieJar();
 
         this.httpClient = axios.create({
             baseURL: this.apiUrl,
@@ -30,8 +33,11 @@ class BoxBillingService {
             headers: {
                 'Content-Type': 'application/json',
             },
+            jar: this.cookieJar,
             withCredentials: true,
         });
+
+        this.httpClient.defaults.jar = this.cookieJar;
     }
 
     async callApi(module, method, data) {
@@ -40,6 +46,9 @@ class BoxBillingService {
         try {
             const response = await this.httpClient.post(url, data);
             const result = response.data;
+
+            // Log the 'set-cookie' headers
+            console.log('Set-Cookie headers:', response.headers['set-cookie']);
 
             if (response.status !== 200) {
                 throw new Error(`BoxBilling API returned error: ${response.statusText}`);
@@ -67,6 +76,8 @@ class BoxBillingService {
         const module = methodName.substring(0, underscoreIndex);
         const method = methodName.substring(underscoreIndex + 1);
         const data = args.length > 0 ? args[0] : {};
+        const cookies = await this.cookieJar.getCookies(this.apiUrl);
+        console.log('Cookies:', cookies);
         return await this.callApi(module, method, data);
     }
 }
