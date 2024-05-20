@@ -103,6 +103,7 @@ async function setupUserConsumer(connection) {
               `Deleted client with id: ${clientId}`,
               false,
             );
+            await linkUuidToClientId(user.id, "NULL");
             channel.ack(msg);
           } catch (error) {
             logger.log(
