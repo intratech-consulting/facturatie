@@ -279,6 +279,12 @@ async function runTests() {
             resolve();
         });
     });
+    await test_getClient(5);
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
     // await test_createOrder(orderData, clientID);
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
