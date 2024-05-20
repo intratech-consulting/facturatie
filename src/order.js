@@ -14,14 +14,14 @@ async function setupOrderConsumer(connection) {
   const exchange = "amq.topic";
   const queue = constants.SYSTEM;
   await channel.assertExchange(exchange, "topic", { durable: true });
-  logger.info(`Asserted exchange: ${exchange}`);
+  logger.log("setupOrderConsumer", `Asserted exchange: ${exchange}`, false);
   await channel.assertQueue(queue, { durable: true });
-  logger.info(`Asserted queue: ${queue}`);
-  logger.info(`Start consuming messages: ${queue}`);
+  logger.log("setupOrderConsumer", `Asserted queue: ${queue}`, false);
+  logger.log("setupOrderConsumer", `Start consuming messages: ${queue}`, false);
   channel.consume(
     queue,
     async function (msg) {
-      logger.info(`Received message: ${msg.content.toString()}`);
+      logger.log("setupOrderConsumer", `Received message: ${msg.content.toString()}`, false);
       const object = parser.parse(msg.content.toString());
       switch (user.crud_operation) {
         case "create":
@@ -31,15 +31,17 @@ async function setupOrderConsumer(connection) {
             // TODO: Make an `invoice` object and send it to the `facturatie` queue.
             channel.ack(msg);
           } catch (error) {
-            logger.error(error);
+            logger.log("setupOrderConsumer", `Nack message: ${msg.content.toString()}`, true);
             channel.nack(msg);
           }
           break;
         case "update":
-          channel.ack(msg);
+          logger.log("setupOrderConsumer", `Unsupported operation: ${msg.content.toString()}`, true);
+          channel.nack(msg);
           return;
         case "delete":
-          channel.ack(msg);
+          logger.log("setupOrderConsumer", `Unsupported operation: ${msg.content.toString()}`, true);
+          channel.nack(msg);
           return;
       }
     },
