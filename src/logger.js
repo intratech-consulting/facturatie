@@ -29,10 +29,14 @@ class Logger {
         Timestamp: new Date().toISOString(), // Current timestamp
       },
     };
-    if (this.channel) {
-      this.channel.publish(this.exchange, "logs", Buffer.from(JSON.stringify(logData)));
-    }
     this.pinoLogger.info(logData);
+    if (this.channel) {
+      this.channel.publish(
+        this.exchange,
+        "logs",
+        Buffer.from(JSON.stringify(logData)),
+      );
+    }
   }
 
   static getLogger() {
