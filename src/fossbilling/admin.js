@@ -14,34 +14,35 @@ class admin {
     }
 
     async createClient(userData) {
-         // Check if required parameters are provided
+        // Check if required parameters are provided
         if (!userData.email || !userData.first_name) {
             throw new Error('email and first_name are required');
         }
+        console.log(userData.telephone);
 
-        const address = userData.address && userData.address[0] || {};
-        const password = userData.email && userData.email[0] || "test@mail.com"
+        const address = userData.address || {};
+        const password = "test@mail.com";
 
         const clientData = {
-            email: userData.email && userData.email[0] || "test@mail.com",
-            first_name: userData.first_name && userData.first_name[0] || "Test",
-            last_name: userData.last_name && userData.last_name[0] || "",
+            email: userData.email || "test@mail.com",
+            first_name: userData.first_name || "Test",
+            last_name: userData.last_name || "",
             status: "active",
-            company: userData.company_id && userData.company_id[0] || "",
-            address_1: `${address.street && address.street[0]} ${address.house_number && address.house_number[0]}` || "",
+            company: userData.company_id || "",
+            address_1: `${address.street} ${address.house_number}` || "",
             address_2: "",
-            city: address.city && address.city[0] || "",
-            state: address.state && address.state[0] || "",
-            country: address.country && address.country[0] || "",
-            postcode: address.zip && address.zip[0] || "",
-            phone_cc: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(0, 3) || "",
-            phone: userData.telephone && userData.telephone[0] && userData.telephone[0].substring(3) || "",
-            currency: "EUR",
+            city: address.city || "",
+            state: address.state || "",
+            country: address.country || "",
+            postcode: address.zip || "",
+            phone_cc: userData.telephone.toString().substring(0, 3) || "",
+            phone: userData.telephone.toString().substring(3) || "",
+            currency: "",
             password: `${await this.enc.encryptString(password)}Pass1234`
         };
 
-        console.log(clientData.password)
-    
+        console.log(clientData)
+
         try {
             const response = await this.bbService.callMethod('client_create', [clientData]);
             return response;
@@ -60,6 +61,55 @@ class admin {
             throw error;
         }
     }
+
+    async updateClient(updateData, clientId = updateData.id) {
+
+        // Check if required parameters are provided
+        if (!clientId) {
+            throw new Error('client_id is required');
+        }
+
+        const {
+            email,
+            first_name,
+            last_name,
+            company_id,
+            telephone,
+            address: {
+                street,
+                house_number,
+                city,
+                state,
+                country,
+                zip
+            } = {}
+        } = updateData;
+
+        const clientData = {
+            id: clientId,
+            ...(email && email[0] && { email: email }),
+            ...(first_name && first_name[0] && { first_name: first_name }),
+            ...(last_name && last_name[0] && { last_name: last_name }),
+            ...(company_id && company_id[0] && { company: company_id }),
+            ...(telephone && telephone[0] && {
+                phone_cc: telephone.toString().substring(0, 3),
+                phone: telephone.toString().substring(3)
+            }),
+            ...(street && house_number && street[0] && house_number[0] && { address_1: `${street} ${house_number}` }),
+            ...(city && city[0] && { city: city }),
+            ...(state && state[0] && { state: state}),
+            ...(country && country[0] && { country: country }),
+            ...(zip && zip[0] && { postcode: zip })
+        };
+
+        try {
+            const response = await this.bbService.callMethod('client_update', [clientData]);
+            return response;
+        } catch (error) {
+            console.error(`Error updating client: ${error}`);
+            throw error;
+        }
+    };
 
     async createOrder(orderData, clientID = orderData.user_id) {
 
@@ -102,7 +152,7 @@ class admin {
             throw error;
         }
     }
-    
+
     async getCartList() {
         try {
             const response = await this.bbService.callMethod('cart_get_list', []);
