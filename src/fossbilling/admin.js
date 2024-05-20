@@ -172,6 +172,18 @@ class admin {
             throw error;
         }
     }
+
+    async userExists(clientId) {
+        try {
+            await this.getClient(clientId);
+            return true;
+        } catch (error) {
+            if (error.message.includes('Client not found')) {
+                return false;
+            }
+            throw error;
+        }
+    }
 }
 
 module.exports = admin;
