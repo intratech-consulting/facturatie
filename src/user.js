@@ -33,7 +33,7 @@ async function setupUserConsumer(connection) {
       switch (user.crud_operation) {
         case "create":
           try {
-            const exists = await fossbilling.clientExists(user.email);
+            const exists = await fossbilling.userExists(user.email);
             if (exists) {
               logger.log(
                 "setupUserConsumer",
