@@ -1,8 +1,11 @@
 const axios = require("axios");
 
+require("dotenv").config();
+
 const serviceName = "facturatie";
 const port = 6000;
-const hostname = "10.2.160.53";
+const rabbitmqUrl = process.env.RABBITMQ_URL;
+const hostname = rabbitmqUrl.split("//")[1].split(":")[0];
 const address = `http://${hostname}:${port}`;
 
 /*
