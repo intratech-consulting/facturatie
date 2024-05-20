@@ -183,9 +183,9 @@ async function test_createOrder(orderData, clientID = orderData.user_id) {
     }
 }
 
-async function test_getClient(clientID) {
+async function test_getClient(email) {
     try {
-        const response = await admin.getClient(clientID);
+        const response = await admin.getClient( email);
         logToFile(JSON.stringify(response, null, 2));
         console.log("client retrieved", response);
         return response; // Make sure to return the response
@@ -279,6 +279,12 @@ async function runTests() {
             resolve();
         });
     });
+    await test_getClient('fanta@redbull.be');
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
     // await test_createOrder(orderData, clientID);
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
@@ -314,12 +320,12 @@ async function runTests() {
     //         resolve();
     //     });
     // });
-    await test_updateClient(updateData, clientID);
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
+    // await test_updateClient(updateData, clientID);
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
     // await test_batchExpire();
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {

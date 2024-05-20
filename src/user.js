@@ -33,6 +33,16 @@ async function setupUserConsumer(connection) {
       switch (user.crud_operation) {
         case "create":
           try {
+            const exists = await fossbilling.clientExists(user.email);
+            if (exists) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with email ${user.email} already exists.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
             const clientId = await fossbilling.createClient(user);
             logger.log(
               "setupUserConsumer",
@@ -93,6 +103,7 @@ async function setupUserConsumer(connection) {
               `Deleted client with id: ${clientId}`,
               false,
             );
+            await linkUuidToClientId(user.id, "NULL");
             channel.ack(msg);
           } catch (error) {
             logger.log(

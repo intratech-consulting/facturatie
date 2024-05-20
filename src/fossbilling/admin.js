@@ -143,9 +143,9 @@ class admin {
         }
     }
 
-    async getClient(clientId) {
+    async getClient( email, clientId = '') {
         try {
-            const response = await this.bbService.callMethod('client_get', [{ id: clientId }]);
+            const response = await this.bbService.callMethod('client_get', [{ id: clientId, email: email }]);
             return response;
         } catch (error) {
             console.error(`Error getting client: ${error}`);
@@ -169,6 +169,18 @@ class admin {
             return response;
         } catch (error) {
             console.error(`Error expiring batch: ${error}`);
+            throw error;
+        }
+    }
+
+    async userExists(email) {
+        try {
+            await this.getClient(email);
+            return true;
+        } catch (error) {
+            if (error.message.includes('Client not found')) {
+                return false;
+            }
             throw error;
         }
     }
