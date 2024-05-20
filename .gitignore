@@ -8,3 +8,4 @@ package-lock.json
 node_modules
 .env
 src/fossbilling/log.txt
+src/fossbilling/temp.txt

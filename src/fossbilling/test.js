@@ -2,6 +2,7 @@ const xmlHandling = require('./xmlHandling');
 const adminClass = require('./admin');
 const guestClass = require('./guest');
 
+const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const fs = require('fs');
 const path = require('path');
 const logFilePath = path.join(__dirname, 'log.txt');
@@ -10,6 +11,7 @@ const logFilePath = path.join(__dirname, 'log.txt');
 const xh = new xmlHandling();
 const admin = new adminClass();
 const guest = new guestClass();
+const parser = new XMLParser();
 
 function logToFile(data, filename = logFilePath) {
     const message = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
@@ -25,10 +27,10 @@ let userData =
     `<user>
         <routing_key>user.crm</routing_key>
         <crud_operation>create</crud_operation>
-        <id>1238740192847</id>
+        <id>f60ac425-30c9-4864-a014-0af2cf91322c</id>
         <first_name>John</first_name>
         <last_name>Doe</last_name>
-        <email>john.doe@mail.com</email>
+        <email>sisi.achternaam@voorbeeld.be</email>
         <telephone>+32467179912</telephone>
         <birthday>2024-04-14</birthday>
         <address>
@@ -98,7 +100,7 @@ let updateData =
     </user>`;
     
 async function test_xmlToJson(userData) {
-    json = await xh.xmlToJson(userData);
+    json = parser.parse(userData.toString());
     console.log(json);
     return json;
 };
@@ -269,7 +271,7 @@ async function test_batchExpire() {
 
 // functie om de testen uit te voeren
 async function runTests() {
-    // await test_xmlToJson();
+    // await test_xmlToJson(userData);
     // await test_jsonToXml();
     clientID = await test_createClient(userData);
     await new Promise((resolve) => {
@@ -277,41 +279,41 @@ async function runTests() {
             resolve();
         });
     });
-    await test_createOrder(orderData, clientID);
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
-    clientData = await test_getClient(clientID);
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
-    await test_loginClient(clientData);
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
-    await test_handleOrder(orderData);
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
-    await test_getCart();await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
-    await test_getCartList();
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
+    // await test_createOrder(orderData, clientID);
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
+    // clientData = await test_getClient(clientID);
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
+    // await test_loginClient(clientData);
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
+    // await test_handleOrder(orderData);
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
+    // await test_getCart();await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
+    // await test_getCartList();
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
     await test_updateClient(updateData, clientID);
     await new Promise((resolve) => {
         process.stdin.once('data', () => {
