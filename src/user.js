@@ -63,6 +63,9 @@ async function setupUserConsumer(connection) {
             channel.nack(msg);
           }
           return;
+        default:
+          logger.log("setupUserConsumer", `Unknown operation: ${user.crud_operation}`, true);
+          channel.nack(msg);
       }
     },
     {
