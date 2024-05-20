@@ -54,7 +54,7 @@ async function setupUserConsumer(connection) {
             );
             channel.nack(msg);
           }
-          return;
+          break;
         case "update":
           try {
             const clientId = await getClientIdByUuid(user.id);
@@ -78,8 +78,7 @@ async function setupUserConsumer(connection) {
             );
             channel.nack(msg);
           }
-          channel.ack(msg);
-          return;
+          break;
         case "delete":
           try {
             const clientId = await getClientIdByUuid(user.id);
@@ -103,7 +102,7 @@ async function setupUserConsumer(connection) {
             );
             channel.nack(msg);
           }
-          return;
+          break;
         default:
           logger.log(
             "setupUserConsumer",
