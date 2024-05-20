@@ -1,19 +1,24 @@
 const amqp = require("amqplib");
-const { getLogger } = require("./logger");
+const Logger = require("./logger");
 const setupUserConsumer = require("./user");
 const setupHeartbeats = require("./heartbeat");
 require("dotenv").config();
 
-const logger = getLogger();
-
 async function main() {
-  const credentials = amqp.credentials.plain(process.env.RABBITMQ_USER, process.env.RABBITMQ_PASS);
+  const credentials = amqp.credentials.plain(
+    process.env.RABBITMQ_USER,
+    process.env.RABBITMQ_PASS,
+  );
   const connection = await amqp.connect(process.env.RABBITMQ_URL, {
     credentials,
   });
-  logger.info("Connected to RabbitMQ");
+  let logger = new Logger();
+  await logger.setupLogger(connection);
+  logger.log("main", "Connected to RabbitMQ server.", false);
   await setupHeartbeats(connection);
+  logger.log("main", "Heartbeats setup.", false);
   await setupUserConsumer(connection);
+  logger.log("main", "User consumer setup.", false);
 }
 
 main();
