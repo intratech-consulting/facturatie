@@ -1,7 +1,7 @@
 const amqp = require("amqplib");
 const Logger = require("./logger");
 const setupUserConsumer = require("./user");
-const setupOrderConsumer = require("./order");
+const { setupInvoicePublisher, setupOrderConsumer  }= require("./order");
 const setupHeartbeats = require("./heartbeat");
 require("dotenv").config();
 
@@ -20,6 +20,8 @@ async function main() {
   logger.log("main", "Heartbeats setup.", false);
   await setupUserConsumer(connection);
   logger.log("main", "User consumer setup.", false);
+  await setupInvoicePublisher(connection);
+  logger.log("main", "Invoice publisher setup.", false);
   await setupOrderConsumer(connection);
   logger.log("main", "Order consumer setup.", false);
 }
