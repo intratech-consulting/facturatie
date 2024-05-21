@@ -269,22 +269,36 @@ async function test_batchExpire() {
     }
 }
 
+async function test_userExists(email) {
+    try {
+        const response = await admin.userExists(email);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("user exists", response);
+    } catch (error) {
+        console.error("Error in test_userExists:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error checking if user exists: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
 // functie om de testen uit te voeren
 async function runTests() {
     // await test_xmlToJson(userData);
     // await test_jsonToXml();
-    clientID = await test_createClient(userData);
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
-    await test_getClient('fanta@redbull.be');
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
+    // clientID = await test_createClient(userData);
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
+    await test_getClient('fantatje@redbull.com');
+    await test_userExists('fantatje@redbull.com');
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
     // await test_createOrder(orderData, clientID);
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
@@ -332,7 +346,7 @@ async function runTests() {
     //         resolve();
     //     });
     // });
-    await test_deleteClient(clientID);
+    // await test_deleteClient(clientID);
     console.log("Tests completed");
 };
 
