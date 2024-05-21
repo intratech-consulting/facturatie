@@ -22,47 +22,105 @@ async function setupUserConsumer(connection) {
   channel.consume(
     queue,
     async function (msg) {
-      logger.log("setupUserConsumer", `Received message: ${msg.content.toString()}`, false);
+      logger.log(
+        "setupUserConsumer",
+        `Received message: ${msg.content.toString()}`,
+        false,
+      );
       const object = parser.parse(msg.content.toString());
       const user = object.user;
 
       switch (user.crud_operation) {
         case "create":
           try {
+            const exists = await fossbilling.userExists(user.email);
+            if (exists) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with email ${user.email} already exists.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
             const clientId = await fossbilling.createClient(user);
-            logger.log("setupUserConsumer", `Created client with id: ${clientId}`, false);
+            logger.log(
+              "setupUserConsumer",
+              `Created client with id: ${clientId}`,
+              false,
+            );
             await linkUuidToClientId(user.id, clientId);
-            logger.log("setupUserConsumer", `Linked UUID to client with id: ${clientId}`, false);
+            logger.log(
+              "setupUserConsumer",
+              `Linked UUID to client with id: ${clientId}`,
+              false,
+            );
             channel.ack(msg);
           } catch (error) {
-            logger.log("setupUserConsumer", `Error during creation - User UUID: ${user.id}.`, true);
+            logger.log(
+              "setupUserConsumer",
+              `Error during creation - User UUID: ${user.id}.`,
+              true,
+            );
             channel.nack(msg);
           }
-          return;
+          break;
         case "update":
           try {
-            // const clientId = await getClientIdByUuid(user.id);
-            // logger.info(`Updating client with id: ${clientId}`);
-            // await fossbilling.updateClient(clientId, user); // TODO: <- Doesn't exist
-            // logger.info(`Updated client with id: ${clientId}`);
+            const clientId = await getClientIdByUuid(user.id);
+            logger.log(
+              "setupUserConsumer",
+              `Updating client with id: ${clientId}`,
+              false,
+            );
+            await fossbilling.updateClient(clientId, user);
+            logger.log(
+              "setupUserConsumer",
+              `Updated client with id: ${clientId}`,
+              false,
+            );
+            channel.ack(msg);
           } catch (error) {
-            logger.log("setupUserConsumer", `Error during update - User UUID: ${user.id}.`, true);
+            logger.log(
+              "setupUserConsumer",
+              `Error during update - User UUID: ${user.id}.`,
+              true,
+            );
             channel.nack(msg);
           }
-          channel.ack(msg);
-          return;
+          break;
         case "delete":
           try {
             const clientId = await getClientIdByUuid(user.id);
-            logger.log("setupUserConsumer", `Deleting client with id: ${clientId}`, false);
+            logger.log(
+              "setupUserConsumer",
+              `Deleting client with id: ${clientId}`,
+              false,
+            );
             fossbilling.deleteClient(clientId);
-            logger.log("setupUserConsumer", `Deleted client with id: ${clientId}`, false);
+            logger.log(
+              "setupUserConsumer",
+              `Deleted client with id: ${clientId}`,
+              false,
+            );
+            await linkUuidToClientId(user.id, "NULL");
             channel.ack(msg);
           } catch (error) {
-            logger.log("setupUserConsumer", `Error during deletion - User UUID: ${user.id}.`, true);
+            logger.log(
+              "setupUserConsumer",
+              `Error during deletion - User UUID: ${user.id}.`,
+              true,
+            );
             channel.nack(msg);
           }
-          return;
+          break;
+        default:
+          logger.log(
+            "setupUserConsumer",
+            `Unknown operation: ${user.crud_operation}`,
+            true,
+          );
+          channel.nack(msg);
       }
     },
     {
