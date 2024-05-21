@@ -269,6 +269,19 @@ async function test_batchExpire() {
     }
 }
 
+async function test_userExists(email) {
+    try {
+        const response = await admin.userExists(email);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("user exists", response);
+    } catch (error) {
+        console.error("Error in test_userExists:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error checking if user exists: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
 async function test_getInvoice(invoiceId) {
     try {
         const response = await admin.getInvoice(invoiceId);
