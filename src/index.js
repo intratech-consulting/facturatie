@@ -14,11 +14,8 @@ async function main() {
   });
   let logger = new Logger();
   await logger.setupLogger(connection);
-  logger.log("main", "Connected to RabbitMQ server.", false);
   await setupHeartbeats(connection);
-  logger.log("main", "Heartbeats setup.", false);
   await setupUserConsumer(connection);
-  logger.log("main", "User consumer setup.", false);
 }
 
 main();

@@ -286,19 +286,19 @@ async function test_userExists(email) {
 async function runTests() {
     // await test_xmlToJson(userData);
     // await test_jsonToXml();
-    // clientID = await test_createClient(userData);
-    // await new Promise((resolve) => {
-    //     process.stdin.once('data', () => {
-    //         resolve();
-    //     });
-    // });
+    clientID = await test_createClient(userData);
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
     await test_getClient('fantatje@redbull.com');
     await test_userExists('fantatje@redbull.com');
-    // await new Promise((resolve) => {
-    //     process.stdin.once('data', () => {
-    //         resolve();
-    //     });
-    // });
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
     // await test_createOrder(orderData, clientID);
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
@@ -334,19 +334,19 @@ async function runTests() {
     //         resolve();
     //     });
     // });
-    // await test_updateClient(updateData, clientID);
-    // await new Promise((resolve) => {
-    //     process.stdin.once('data', () => {
-    //         resolve();
-    //     });
-    // });
+    await test_updateClient(updateData, clientID);
+    await new Promise((resolve) => {
+        process.stdin.once('data', () => {
+            resolve();
+        });
+    });
     // await test_batchExpire();
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
     //         resolve();
     //     });
     // });
-    // await test_deleteClient(clientID);
+    await test_deleteClient(clientID);
     console.log("Tests completed");
 };
 
