@@ -33,8 +33,7 @@ async function setupUserConsumer(connection) {
       switch (user.crud_operation) {
         case "create":
           try {
-            const exists = await fossbilling.userExists(user.email);
-            if (exists) {
+            if (await fossbilling.userExists(user.email)) {
               logger.log(
                 "setupUserConsumer",
                 `Client with email ${user.email} already exists.`,
@@ -67,6 +66,15 @@ async function setupUserConsumer(connection) {
           break;
         case "update":
           try {
+            if (!(await fossbilling.userExists(user.email))) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with email ${user.email} does not exist.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
             const clientId = await getClientIdByUuid(user.id);
             logger.log(
               "setupUserConsumer",
@@ -91,6 +99,15 @@ async function setupUserConsumer(connection) {
           break;
         case "delete":
           try {
+            if (!(await fossbilling.userExists(user.email))) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with email ${user.email} does not exist.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
             const clientId = await getClientIdByUuid(user.id);
             logger.log(
               "setupUserConsumer",
