@@ -53,12 +53,16 @@ class admin {
     };
 
     async deleteClient(clientId) {
-        try {
-            const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
-            return response;
-        } catch (error) {
-            console.error(`Error deleting client: ${error}`);
-            throw error;
+        if (this.checkClientInvoice(clientId)) {
+            try {
+                const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
+                return response;
+            } catch (error) {
+                console.error(`Error deleting client: ${error}`);
+                throw error;
+            }
+        } else {
+            throw new Error('Client has invoices, can\'t be deleted.');
         }
     }
 
@@ -203,7 +207,7 @@ class admin {
     }
 
     async getInvoice(invoiceId) {
-        
+
         let invoicePdfBase64 = '';
 
         try {
@@ -216,6 +220,35 @@ class admin {
             console.error(`Error getting invoice: ${error}`);
             throw error;
         }
+    }
+
+    async getInvoiceList(page = 1, per_page = 100) {
+        try {
+            const response = await this.bbService.callMethod('invoice_get_list', [{ page, per_page }]);
+            return response;
+        } catch (error) {
+            console.error(`Error getting invoice list: ${error}`);
+            throw error;
+        }
+    }
+
+    async checkClientInvoice(clientId) {
+        let page = 1;
+        while (true) {
+            const response = await this.getInvoiceList(page);
+            if (response && response.list) {
+                for (let invoice of response.list) {
+                    if (invoice.client_id === clientId) {
+                        return true;
+                    }
+                }
+            }
+            if (page >= response.pages) {
+                break;
+            }
+            page++;
+        }
+        return false;
     }
 }
 
