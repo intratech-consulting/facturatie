@@ -282,23 +282,48 @@ async function test_userExists(email) {
     }
 }
 
+async function test_getInvoice(invoiceId) {
+    try {
+        const response = await admin.getInvoice(invoiceId);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("invoice retrieved", response);
+    } catch (error) {
+        console.error("Error in test_getInvoice:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error retrieving invoice: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+async function test_viewInvoice(invoiceHash) {
+    try {
+        const response = await admin.viewInvoice(invoiceHash);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("invoice viewed", response);
+    } catch (error) {
+        console.error("Error in test_viewInvoice:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error viewing invoice: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
 // functie om de testen uit te voeren
 async function runTests() {
     // await test_xmlToJson(userData);
     // await test_jsonToXml();
-    clientID = await test_createClient(userData);
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
-    await test_getClient('fantatje@redbull.com');
-    await test_userExists('fantatje@redbull.com');
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
+    // clientID = await test_createClient(userData);
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
+    // await test_getClient('fanta@redbull.be');
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
     // await test_createOrder(orderData, clientID);
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
@@ -334,19 +359,22 @@ async function runTests() {
     //         resolve();
     //     });
     // });
-    await test_updateClient(updateData, clientID);
-    await new Promise((resolve) => {
-        process.stdin.once('data', () => {
-            resolve();
-        });
-    });
+    await test_getInvoice('2');
+    // const invoiceHash = 'eba00351b326bb22ebee817ab67deec237abc135476a4d06451a7e8c57485c10c0b019b2f1477d6bb720e63ec0130fa71fd97124ff40fd3209ffb705844602c536886464214eb8e9f74c0bc86175c8b1a127cd01216a001b0001d05fd1793b985e1f5ccda02ab85f460b1497e7e03b';
+    // await test_viewInvoice(invoiceHash);
+    // await test_updateClient(updateData, clientID);
+    // await new Promise((resolve) => {
+    //     process.stdin.once('data', () => {
+    //         resolve();
+    //     });
+    // });
     // await test_batchExpire();
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
     //         resolve();
     //     });
     // });
-    await test_deleteClient(clientID);
+    // await test_deleteClient(clientID);
     console.log("Tests completed");
 };
 

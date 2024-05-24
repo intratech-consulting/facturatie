@@ -97,7 +97,7 @@ class admin {
             }),
             ...(street && house_number && street[0] && house_number[0] && { address_1: `${street} ${house_number}` }),
             ...(city && city[0] && { city: city }),
-            ...(state && state[0] && { state: state}),
+            ...(state && state[0] && { state: state }),
             ...(country && country[0] && { country: country }),
             ...(zip && zip[0] && { postcode: zip })
         };
@@ -143,7 +143,7 @@ class admin {
         }
     }
 
-    async getClient( email, clientId = '') {
+    async getClient(email, clientId = '') {
         try {
             const response = await this.bbService.callMethod('client_get', [{ id: clientId, email: email }]);
             return response;
@@ -181,6 +181,39 @@ class admin {
             if (error.message.includes('Client not found')) {
                 return false;
             }
+            throw error;
+        }
+    }
+
+    async viewInvoice(invoiceHash) {
+        try {
+            let url = new URL(process.env.API_URL);
+            let pathname = url.pathname;
+            if (pathname.endsWith('/api')) {
+                pathname = pathname.substring(0, pathname.length - 4);
+            }
+            url.pathname = pathname;
+            const response = await axios.get(`${url.toString()}invoice/pdf/${invoiceHash}`, { responseType: 'arraybuffer' });
+            let base64Response = Buffer.from(response.data, 'binary').toString('base64');
+            return base64Response;
+        } catch (error) {
+            console.error(`Error viewing invoice: ${error}`);
+            throw error;
+        }
+    }
+
+    async getInvoice(invoiceId) {
+        
+        let invoicePdfBase64 = '';
+
+        try {
+            const response = await this.bbService.callMethod('invoice_get', [{ id: invoiceId }]);
+            if (response && response.hash) {
+                invoicePdfBase64 = await this.viewInvoice(response.hash);
+            }
+            return invoicePdfBase64;
+        } catch (error) {
+            console.error(`Error getting invoice: ${error}`);
             throw error;
         }
     }
