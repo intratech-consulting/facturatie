@@ -3,7 +3,7 @@ const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const Logger = require("./logger");
 const logger = Logger.getLogger();
 const FossbillingAdmin = require("./fossbilling/admin");
-const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
+const { getClientIdByUuid, linkUuidToClientId, updateUuidToClientId } = require("./masteruuid");
 const constants = require("./constants");
 
 const parser = new XMLParser();
@@ -33,8 +33,7 @@ async function setupUserConsumer(connection) {
       switch (user.crud_operation) {
         case "create":
           try {
-            const exists = await fossbilling.userExists(user.email);
-            if (exists) {
+            if (await fossbilling.userExists(user.email)) {
               logger.log(
                 "setupUserConsumer",
                 `Client with email ${user.email} already exists.`,
@@ -67,6 +66,15 @@ async function setupUserConsumer(connection) {
           break;
         case "update":
           try {
+            if (!(await fossbilling.userExists(user.email))) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with email ${user.email} does not exist.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
             const clientId = await getClientIdByUuid(user.id);
             logger.log(
               "setupUserConsumer",
@@ -91,6 +99,15 @@ async function setupUserConsumer(connection) {
           break;
         case "delete":
           try {
+            if (!(await fossbilling.userExists(user.email))) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with email ${user.email} does not exist.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
             const clientId = await getClientIdByUuid(user.id);
             logger.log(
               "setupUserConsumer",
@@ -103,7 +120,7 @@ async function setupUserConsumer(connection) {
               `Deleted client with id: ${clientId}`,
               false,
             );
-            await linkUuidToClientId(user.id, "NULL");
+            await updateUuidToClientId(user.id, "NULL");
             channel.ack(msg);
           } catch (error) {
             logger.log(

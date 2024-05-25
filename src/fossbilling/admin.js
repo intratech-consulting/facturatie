@@ -53,6 +53,7 @@ class admin {
     };
 
     async deleteClient(clientId) {
+        // if (!this.checkClientInvoice(clientId)) {
         try {
             const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
             return response;
@@ -60,6 +61,9 @@ class admin {
             console.error(`Error deleting client: ${error}`);
             throw error;
         }
+        // } else {
+        //     throw new Error('Client has invoices, can\'t be deleted.');
+        // }
     }
 
     async updateClient(updateData, clientId = updateData.id) {
@@ -97,7 +101,7 @@ class admin {
             }),
             ...(street && house_number && street[0] && house_number[0] && { address_1: `${street} ${house_number}` }),
             ...(city && city[0] && { city: city }),
-            ...(state && state[0] && { state: state}),
+            ...(state && state[0] && { state: state }),
             ...(country && country[0] && { country: country }),
             ...(zip && zip[0] && { postcode: zip })
         };
@@ -111,25 +115,25 @@ class admin {
         }
     };
 
-    async createOrder(orderData, clientID = orderData.user_id) {
+    async createOrder(orderData, clientID = orderData.id) {
 
         // Check if required parameters are provided
-        if (!orderData.user_id || !orderData.products[0].product[0].product_id[0]) {
+        if (!orderData.id || !orderData.products.product[0].product_id) {
             throw new Error('client_id and product_id are required');
         }
 
         // Prepare the data for the API call
         const data = {
             client_id: clientID,
-            product_id: orderData.products[0].product[0].product_id[0],
+            product_id: orderData.products.product[0].product_id,
             config: orderData.config || {},
-            quantity: orderData.products[0].product[0].amount[0] || 1,
-            price: orderData.total_price[0],
+            quantity: orderData.products.product[0].amount || 1,
+            price: orderData.total_price,
             company: orderData.company_id || "",
-            currency: orderData.currency || "EUR" || "",
-            title: orderData.products[0].product[0].name[0] || "Cola",
+            currency: "",
+            title: orderData.products.product.name || "Cola",
             activate: orderData.activate,
-            invoice_option: orderData.invoice_option || "no-invoice",
+            invoice_option: "issue-invoice",
             created_at: orderData.created_at,
             updated_at: orderData.updated_at
         };
@@ -143,7 +147,7 @@ class admin {
         }
     }
 
-    async getClient( email, clientId = '') {
+    async getClient(email, clientId = '') {
         try {
             const response = await this.bbService.callMethod('client_get', [{ id: clientId, email: email }]);
             return response;
@@ -181,6 +185,103 @@ class admin {
             if (error.message.includes('Client not found')) {
                 return false;
             }
+            throw error;
+        }
+    }
+
+    async viewInvoice(invoiceHash) {
+        try {
+            let url = new URL(process.env.API_URL);
+            let pathname = url.pathname;
+            if (pathname.endsWith('/api')) {
+                pathname = pathname.substring(0, pathname.length - 4);
+            }
+            url.pathname = pathname;
+            const response = await axios.get(`${url.toString()}invoice/pdf/${invoiceHash}`, { responseType: 'arraybuffer' });
+            let base64Response = Buffer.from(response.data, 'binary').toString('base64');
+            return base64Response;
+        } catch (error) {
+            console.error(`Error viewing invoice: ${error}`);
+            throw error;
+        }
+    }
+
+    async getInvoice(invoiceId) {
+
+        let invoicePdfBase64 = '';
+
+        try {
+            const response = await this.bbService.callMethod('invoice_get', [{ id: invoiceId }]);
+            if (response && response.hash) {
+                invoicePdfBase64 = await this.viewInvoice(response.hash);
+            }
+            return invoicePdfBase64;
+        } catch (error) {
+            console.error(`Error getting invoice: ${error}`);
+            throw error;
+        }
+    }
+
+    async getInvoiceList(page = 1, per_page = 100) {
+        try {
+            const response = await this.bbService.callMethod('invoice_get_list', [{ page, per_page }]);
+            return response;
+        } catch (error) {
+            console.error(`Error getting invoice list: ${error}`);
+            throw error;
+        }
+    }
+
+    // Check if client has invoices. Will return true if an invoice is found
+    async checkClientInvoice(clientId) {
+        let page = 1;
+        while (true) {
+            const response = await this.getInvoiceList(page);
+            if (response && response.list) {
+                for (let invoice of response.list) {
+                    if (invoice.client_id === clientId) {
+                        if (invoice.status !== 'paid') {
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (page >= response.pages) {
+                break;
+            }
+            page++;
+        }
+        return false;
+    }
+
+    async getOrder(orderId) {
+        try {
+            const response = await this.bbService.callMethod('order_get', [{ id: orderId }]);
+            return response;
+        } catch (error) {
+            console.error(`Error getting order: ${error}`);
+            throw error;
+        }
+    }
+
+    async finishOrder(orderData, clientId = orderData.id) {
+
+        try {
+            // Create the order and save the orderId
+            const orderId = await this.createOrder(orderData, clientId);
+
+            // Get the order details
+            const orderDetails = await this.getOrder(orderId);
+
+            // Get the unpaid_invoice_id
+            const unpaidInvoiceId = orderDetails.unpaid_invoice_id;
+
+            // Get the invoice details
+            const invoiceDetails = await this.getInvoice(unpaidInvoiceId);
+
+            return invoiceDetails;
+        } catch (error) {
+            console.error(`Error finishing order: ${error}`);
             throw error;
         }
     }
