@@ -53,7 +53,7 @@ class admin {
     };
 
     async deleteClient(clientId) {
-        if (this.checkClientInvoice(clientId)) {
+        if (!this.checkClientInvoice(clientId)) {
             try {
                 const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
                 return response;
@@ -232,6 +232,7 @@ class admin {
         }
     }
 
+    // Check if client has invoices. Will return true if an invoice is found
     async checkClientInvoice(clientId) {
         let page = 1;
         while (true) {
@@ -239,7 +240,9 @@ class admin {
             if (response && response.list) {
                 for (let invoice of response.list) {
                     if (invoice.client_id === clientId) {
-                        return true;
+                        if (invoice.status !== 'paid') {
+                            return true;
+                        }
                     }
                 }
             }
@@ -249,6 +252,16 @@ class admin {
             page++;
         }
         return false;
+    }
+
+    async getOrder(orderId) {
+        try {
+            const response = await this.bbService.callMethod('order_get', [{ id: orderId }]);
+            return response;
+        } catch (error) {
+            console.error(`Error getting order: ${error}`);
+            throw error;
+        }
     }
 }
 

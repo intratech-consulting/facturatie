@@ -334,6 +334,20 @@ async function test_checkClientInvoice(clientId) {
     }
 }
 
+async function test_getOrder(orderId) {
+    try {
+        const response = await admin.getOrder(orderId);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("order retrieved", response);
+    } catch (error) {
+        console.error("Error in test_getOrder:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error retrieving order: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
+
 // functie om de testen uit te voeren
 async function runTests() {
     // await test_xmlToJson(userData);
@@ -385,10 +399,11 @@ async function runTests() {
     //         resolve();
     //     });
     // });
+    // await test_getOrder(1);
     // await test_getInvoice('2');
     // const invoiceHash = 'eba00351b326bb22ebee817ab67deec237abc135476a4d06451a7e8c57485c10c0b019b2f1477d6bb720e63ec0130fa71fd97124ff40fd3209ffb705844602c536886464214eb8e9f74c0bc86175c8b1a127cd01216a001b0001d05fd1793b985e1f5ccda02ab85f460b1497e7e03b';
     // await test_viewInvoice(invoiceHash);
-    // await test_getInvoiceList();
+    await test_getInvoiceList();
     await test_checkClientInvoice(4);
     // await test_updateClient(updateData, clientID);
     // await new Promise((resolve) => {
