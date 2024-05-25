@@ -54,16 +54,13 @@ async function setupOrderConsumer(connection) {
           try {
             const clientId = await getClientIdByUuid(object.order.user_id);
             const client = await fossbilling.getClient(clientId);
-            const createdOrder = await fossbilling.createOrder(order, clientId);
-            let pdfPath = ""; // TODO: Get the PDF path from the `fossbilling` API.
-            let pdf = fs.readFileSync(pdfPath);
-            let pdfBase64 = pdf.toString("base64");
+            const invoicePDFBase64 = await fossbilling.createOrder(order, clientId);
             let invoice = {
               Invoice: {
                 filename:
                   client.name + "_" + client.lastname + "_" + order.id + ".pdf",
                 email: client.email,
-                pdfBase64: pdfBase64,
+                pdfBase64: invoicePDFBase64,
               },
             };
             const xml = XMLBuilder.buildObject(invoice);
