@@ -371,7 +371,7 @@ async function test_finishOrder(orderData, clientId) {
 // functie om de testen uit te voeren
 async function runTests() {
     // await test_xmlToJson(userData);
-    // await test_jsonToXml();
+    // await test_jsonToXml();t test_createOrder(orderData, clientID);
     clientId = await test_createClient(userData);
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
