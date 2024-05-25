@@ -279,6 +279,11 @@ class admin {
             // Get the invoice details
             const invoiceDetails = await this.getInvoice(unpaidInvoiceId);
 
+            if (orderData.status === 'paid') {
+                // Mark the invoice as paid
+                await this.bbService.callMethod('invoice_mark_as_paid', [{ id: unpaidInvoiceId }]);
+            }
+
             return invoiceDetails;
         } catch (error) {
             console.error(`Error finishing order: ${error}`);
