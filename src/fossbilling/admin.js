@@ -53,17 +53,17 @@ class admin {
     };
 
     async deleteClient(clientId) {
-        if (!this.checkClientInvoice(clientId)) {
-            try {
-                const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
-                return response;
-            } catch (error) {
-                console.error(`Error deleting client: ${error}`);
-                throw error;
-            }
-        } else {
-            throw new Error('Client has invoices, can\'t be deleted.');
+        // if (!this.checkClientInvoice(clientId)) {
+        try {
+            const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
+            return response;
+        } catch (error) {
+            console.error(`Error deleting client: ${error}`);
+            throw error;
         }
+        // } else {
+        //     throw new Error('Client has invoices, can\'t be deleted.');
+        // }
     }
 
     async updateClient(updateData, clientId = updateData.id) {
@@ -115,25 +115,25 @@ class admin {
         }
     };
 
-    async createOrder(orderData, clientID = orderData.user_id) {
+    async createOrder(orderData, clientID = orderData.id) {
 
         // Check if required parameters are provided
-        if (!orderData.user_id || !orderData.products[0].product[0].product_id[0]) {
+        if (!orderData.id || !orderData.products.product[0].product_id) {
             throw new Error('client_id and product_id are required');
         }
 
         // Prepare the data for the API call
         const data = {
             client_id: clientID,
-            product_id: orderData.products[0].product[0].product_id[0],
+            product_id: orderData.products.product[0].product_id,
             config: orderData.config || {},
-            quantity: orderData.products[0].product[0].amount[0] || 1,
-            price: orderData.total_price[0],
+            quantity: orderData.products.product[0].amount || 1,
+            price: orderData.total_price,
             company: orderData.company_id || "",
-            currency: orderData.currency || "EUR" || "",
-            title: orderData.products[0].product[0].name[0] || "Cola",
+            currency: "",
+            title: orderData.products.product.name || "Cola",
             activate: orderData.activate,
-            invoice_option: orderData.invoice_option || "no-invoice",
+            invoice_option: "issue-invoice",
             created_at: orderData.created_at,
             updated_at: orderData.updated_at
         };
@@ -260,6 +260,28 @@ class admin {
             return response;
         } catch (error) {
             console.error(`Error getting order: ${error}`);
+            throw error;
+        }
+    }
+
+    async finishOrder(orderData, clientId = orderData.id) {
+
+        try {
+            // Create the order and save the orderId
+            const orderId = await this.createOrder(orderData, clientId);
+
+            // Get the order details
+            const orderDetails = await this.getOrder(orderId);
+
+            // Get the unpaid_invoice_id
+            const unpaidInvoiceId = orderDetails.unpaid_invoice_id;
+
+            // Get the invoice details
+            const invoiceDetails = await this.getInvoice(unpaidInvoiceId);
+
+            return invoiceDetails;
+        } catch (error) {
+            console.error(`Error finishing order: ${error}`);
             throw error;
         }
     }

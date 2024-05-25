@@ -30,7 +30,7 @@ let userData =
         <id>f60ac425-30c9-4864-a014-0af2cf91322c</id>
         <first_name>John</first_name>
         <last_name>Doe</last_name>
-        <email>sisi.achternaam@voorbeeld.be</email>
+        <email>testing@whatever.com</email>
         <telephone>+32467179912</telephone>
         <birthday>2024-04-14</birthday>
         <address>
@@ -53,12 +53,12 @@ let orderData =
     `<order>
         <routing_key>order.crm</routing_key>
         <crud_operation>create</crud_operation>
-        <id>123</id>
+        <id>53</id>
         <user_id>0123</user_id>
         <company_id>3210</company_id>
         <products>
             <product>
-                <product_id>3</product_id>
+                <product_id>2</product_id>
                 <name>Coca Cola</name>
                 <amount>5</amount>
             </product>
@@ -174,6 +174,7 @@ async function test_createOrder(orderData, clientID = orderData.user_id) {
         const response = await admin.createOrder(jsonOrderData.order, clientID);
         logToFile(JSON.stringify(response, null, 2));
         console.log("order created", response);
+        return response;
     } catch (error) {
         console.error("Error in test_createOrder:", error);
         console.log(jsonOrderData.products)
@@ -181,6 +182,7 @@ async function test_createOrder(orderData, clientID = orderData.user_id) {
         const errorMessage = `Error creating order: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
         logToFile(errorMessage);
     }
+    
 }
 
 async function test_getClient(email) {
@@ -335,6 +337,7 @@ async function test_checkClientInvoice(clientId) {
 }
 
 async function test_getOrder(orderId) {
+    console.log(orderId);
     try {
         const response = await admin.getOrder(orderId);
         logToFile(JSON.stringify(response, null, 2));
@@ -347,12 +350,29 @@ async function test_getOrder(orderId) {
     }
 }
 
+async function test_finishOrder(orderData, clientId) {
+
+    orderData = await test_xmlToJson(orderData);
+    orderData = orderData.order;
+    orderData.id = clientId;
+
+    try {
+        const response = await admin.finishOrder(orderData);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("order finished", response);
+    } catch (error) {
+        console.error("Error in test_finishOrder:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error finishing order: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
 
 // functie om de testen uit te voeren
 async function runTests() {
     // await test_xmlToJson(userData);
     // await test_jsonToXml();
-    // clientID = await test_createClient(userData);
+    clientId = await test_createClient(userData);
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
     //         resolve();
@@ -364,7 +384,7 @@ async function runTests() {
     //         resolve();
     //     });
     // });
-    // await test_createOrder(orderData, clientID);
+    // orderId = await test_createOrder(orderData, clientID);
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
     //         resolve();
@@ -399,12 +419,13 @@ async function runTests() {
     //         resolve();
     //     });
     // });
-    // await test_getOrder(1);
+    // await test_getOrder(orderId);
     // await test_getInvoice('2');
     // const invoiceHash = 'eba00351b326bb22ebee817ab67deec237abc135476a4d06451a7e8c57485c10c0b019b2f1477d6bb720e63ec0130fa71fd97124ff40fd3209ffb705844602c536886464214eb8e9f74c0bc86175c8b1a127cd01216a001b0001d05fd1793b985e1f5ccda02ab85f460b1497e7e03b';
     // await test_viewInvoice(invoiceHash);
-    await test_getInvoiceList();
-    await test_checkClientInvoice(4);
+    // await test_getInvoiceList();
+    // await test_checkClientInvoice(4);
+    await test_finishOrder(orderData, clientId);
     // await test_updateClient(updateData, clientID);
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
@@ -417,7 +438,7 @@ async function runTests() {
     //         resolve();
     //     });
     // });
-    // await test_deleteClient(clientID);
+    await test_deleteClient(clientId);
     console.log("Tests completed");
 };
 
