@@ -53,17 +53,17 @@ class admin {
     };
 
     async deleteClient(clientId) {
-        // if (!this.checkClientInvoice(clientId)) {
-        try {
-            const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
-            return response;
-        } catch (error) {
-            console.error(`Error deleting client: ${error}`);
-            throw error;
+        if (!this.checkClientInvoice(clientId)) {
+            try {
+                const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
+                return response;
+            } catch (error) {
+                console.error(`Error deleting client: ${error}`);
+                throw error;
+            }
+        } else {
+            throw new Error('Client has invoices, can\'t be deleted.');
         }
-        // } else {
-        //     throw new Error('Client has invoices, can\'t be deleted.');
-        // }
     }
 
     async updateClient(updateData, clientId = updateData.id) {
