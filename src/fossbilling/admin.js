@@ -182,7 +182,7 @@ class admin {
             await this.getClient(email);
             return true;
         } catch (error) {
-            if (error.message.includes('Client not found')) {
+            if (error.message.includes('Error getting client')) {
                 return false;
             }
             throw error;
@@ -280,7 +280,7 @@ class admin {
             const invoiceDetails = await this.getInvoice(unpaidInvoiceId);
 
             if (orderData.status === 'paid') {
-                // Mark the invoice as paid
+                // Mark the invoice as paid in case the order is paid
                 await this.bbService.callMethod('invoice_mark_as_paid', [{ id: unpaidInvoiceId }]);
             }
 
