@@ -86,6 +86,16 @@ class guest {
             throw error;
         }
     };
+
+    async checkout() {
+        try {
+            const response = await this.bbService.callMethod('cart_checkout', []);
+            return response;
+        } catch (error) {
+            console.error(`Error checking out cart: ${error}`);
+            throw error;
+        }
+    };
 }
 
 module.exports = guest;
