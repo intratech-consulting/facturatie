@@ -124,6 +124,7 @@ async function setupUserConsumer(connection) {
             await updateUuidToClientId(user.id, "NULL");
             channel.ack(msg);
           } catch (error) {
+            console.log("ERROR:", error)
             logger.log(
               "setupUserConsumer",
               `Error during deletion - User UUID: ${user.id}.`,
