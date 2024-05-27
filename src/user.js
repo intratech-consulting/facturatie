@@ -81,7 +81,6 @@ async function setupUserConsumer(connection) {
               channel.ack(msg);
               return;
             }
-            console.log("USER EXISTE\n\n\n", user);
             await fossbilling.updateClient(user, Number(clientId.facturatie));
             logger.log(
               "setupUserConsumer",
