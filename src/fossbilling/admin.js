@@ -53,9 +53,12 @@ class admin {
     };
 
     async deleteClient(clientId) {
+        console.log("clientId:", clientId)
         if (!this.checkClientInvoice(clientId)) {
             try {
+                console.log("client_delete")
                 const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
+                console.log("response:", response)
                 return response;
             } catch (error) {
                 console.error(`Error deleting client: ${error}`);
@@ -67,7 +70,6 @@ class admin {
     }
 
     async updateClient(updateData, clientId = updateData.id) {
-
         // Check if required parameters are provided
         if (!clientId) {
             throw new Error('client_id is required');
@@ -149,7 +151,7 @@ class admin {
 
     async getClient(email, clientId = '') {
         try {
-            console.log("email:", email, ". clientId:", clientId);
+            console.log("email:", email, "| clientId:", clientId);
             const response = await this.bbService.callMethod('client_get', [{ id: clientId, email: email }]);
             return response;
         } catch (error) {
@@ -183,10 +185,7 @@ class admin {
             await this.getClient(email, id);
             return true;
         } catch (error) {
-            if (error.message.includes('Error getting client')) {
-                return false;
-            }
-            throw error;
+            return false;
         }
     }
 
