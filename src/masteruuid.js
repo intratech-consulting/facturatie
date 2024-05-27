@@ -42,6 +42,38 @@ async function linkUuidToClientId(uuid, clientId) {
 }
 
 /*
+POST /UpdateServiceId
+{
+  "MASTERUUID": "<uuid>",
+  "ServiceId": "<service_id>",
+  "Service": "<service_name>"
+}
+RESPONSE
+{
+    "success": true,
+    "message": "Service ID successfully updated."
+}
+*/
+async function updateUuidToClientId(uuid, clientId) {
+  let data = {
+    MASTERUUID: uuid,
+    ServiceId: clientId,
+    Service: serviceName,
+  };
+  let request = {
+    method: "POST",
+    url: address + "/UpdateServiceId",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
+  };
+  let response = await axios(request);
+  let json = await response.data;
+  return json;
+}
+
+/*
 POST /getServiceId
 {
   "MASTERUUID": "<uuid>",
@@ -99,4 +131,4 @@ async function getUuidByClientId(clientId) {
   return json;
 }
 
-module.exports = { linkUuidToClientId, getClientIdByUuid, getUuidByClientId };
+module.exports = { linkUuidToClientId, getClientIdByUuid, getUuidByClientId, updateUuidToClientId };

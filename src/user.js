@@ -3,7 +3,7 @@ const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const Logger = require("./logger");
 const logger = Logger.getLogger();
 const FossbillingAdmin = require("./fossbilling/admin");
-const { getClientIdByUuid, linkUuidToClientId } = require("./masteruuid");
+const { getClientIdByUuid, linkUuidToClientId, updateUuidToClientId } = require("./masteruuid");
 const constants = require("./constants");
 
 const parser = new XMLParser();
@@ -120,7 +120,7 @@ async function setupUserConsumer(connection) {
               `Deleted client with id: ${clientId}`,
               false,
             );
-            await linkUuidToClientId(user.id, "NULL");
+            await updateUuidToClientId(user.id, "NULL");
             channel.ack(msg);
           } catch (error) {
             logger.log(
