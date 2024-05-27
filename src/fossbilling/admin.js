@@ -183,10 +183,7 @@ class admin {
             await this.getClient(email, id);
             return true;
         } catch (error) {
-            if (error.message.includes('Error getting client')) {
-                return false;
-            }
-            throw error;
+            return false;
         }
     }
 
