@@ -56,6 +56,7 @@ class admin {
         console.log("clientId:", clientId)
         if (!this.checkClientInvoice(clientId)) {
             try {
+                console.log("client_delete")
                 const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
                 console.log("response:", response)
                 return response;
@@ -240,6 +241,7 @@ class admin {
                 for (let invoice of response.list) {
                     if (invoice.client_id === clientId) {
                         if (invoice.status !== 'paid') {
+                            console.log('return true')
                             return true;
                         }
                     }
@@ -250,6 +252,7 @@ class admin {
             }
             page++;
         }
+        console.log('return false')
         return false;
     }
 
