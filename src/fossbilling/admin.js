@@ -240,8 +240,10 @@ class admin {
             console.log('INSIDE WHILE ' + page)
             const response = await this.getInvoiceList(page);
             if (response && response.list) {
+                console.log('INSIDE IF 1')
                 for (let invoice of response.list) {
                     if (invoice.client_id === clientId) {
+                        console.log('INSIDE IF 2')
                         if (invoice.status !== 'paid') {
                             console.log('return true')
                             return true;
@@ -250,6 +252,7 @@ class admin {
                 }
             }
             if (page >= response.pages) {
+                console.log('break')
                 break;
             }
             page++;
