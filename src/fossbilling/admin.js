@@ -149,7 +149,7 @@ class admin {
 
     async getClient(email, clientId = '') {
         try {
-            console.log("email:", email, ". clientId:", clientId);
+            console.log("email:", email, "| clientId:", clientId);
             const response = await this.bbService.callMethod('client_get', [{ id: clientId, email: email }]);
             return response;
         } catch (error) {
