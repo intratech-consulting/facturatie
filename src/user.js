@@ -105,7 +105,7 @@ async function setupUserConsumer(connection) {
               `Deleting client with id: ${clientId}`,
               false,
             );
-            if (!(await fossbilling.userExists(clientId))) {
+            if (!(await fossbilling.userExists('', clientId))) {
               logger.log(
                 "setupUserConsumer",
                 `Client with id ${clientId} does not exist.`,
@@ -114,7 +114,7 @@ async function setupUserConsumer(connection) {
               channel.ack(msg);
               return;
             }
-            fossbilling.deleteClient(clientId);
+            await fossbilling.deleteClient(clientId);
             logger.log(
               "setupUserConsumer",
               `Deleted client with id: ${clientId}`,
