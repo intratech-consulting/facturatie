@@ -234,8 +234,10 @@ class admin {
 
     // Check if client has invoices. Will return true if an invoice is found
     async checkClientInvoice(clientId) {
+        console.log('INSIDE checkClientInvoice')
         let page = 1;
         while (true) {
+            console.log('INSIDE WHILE ' + page)
             const response = await this.getInvoiceList(page);
             if (response && response.list) {
                 for (let invoice of response.list) {
