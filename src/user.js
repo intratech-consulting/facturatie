@@ -72,19 +72,20 @@ async function setupUserConsumer(connection) {
               `Updating client with id: ${clientId}`,
               false,
             );
-            if (!(await fossbilling.userExists('', clientId.facturatie))) {
+            if (!(await fossbilling.userExists('', Number(clientId.facturatie)))) {
               logger.log(
                 "setupUserConsumer",
-                `Client with id ${clientId} does not exist.`,
+                `Client with id ${clientId.facturatie} does not exist.`,
                 false,
               );
               channel.ack(msg);
               return;
             }
-            await fossbilling.updateClient(user, clientId.facturatie);
+            console.log("USER EXISTE\n\n\n", user);
+            await fossbilling.updateClient(user, Number(clientId.facturatie));
             logger.log(
               "setupUserConsumer",
-              `Updated client with id: ${clientId}`,
+              `Updated client with id: ${clientId.facturatie}`,
               false,
             );
             channel.ack(msg);
