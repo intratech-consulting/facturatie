@@ -60,6 +60,7 @@ async function updateUuidToClientId(uuid, clientId) {
     ServiceId: clientId,
     Service: serviceName,
   };
+  console.log(data);
   let request = {
     method: "POST",
     url: address + "/UpdateServiceId",
