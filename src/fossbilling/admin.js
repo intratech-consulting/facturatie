@@ -67,7 +67,7 @@ class admin {
     }
 
     async updateClient(updateData, clientId = updateData.id) {
-
+        console.log(updateData, clientId)
         // Check if required parameters are provided
         if (!clientId) {
             throw new Error('client_id is required');
