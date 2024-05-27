@@ -114,7 +114,7 @@ async function setupUserConsumer(connection) {
               channel.ack(msg);
               return;
             }
-            print("Deleting client with id: " + clientId)
+            console.log("Deleting client with id: " + clientId)
             await fossbilling.deleteClient(clientId);
             logger.log(
               "setupUserConsumer",
