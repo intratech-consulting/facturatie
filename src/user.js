@@ -72,7 +72,7 @@ async function setupUserConsumer(connection) {
               `Updating client with id: ${clientId}`,
               false,
             );
-            if (!(await fossbilling.userExists('', clientId))) {
+            if (!(await fossbilling.userExists('', clientId.facturatie))) {
               logger.log(
                 "setupUserConsumer",
                 `Client with id ${clientId} does not exist.`,
