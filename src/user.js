@@ -66,25 +66,25 @@ async function setupUserConsumer(connection) {
           break;
         case "update":
           try {
-            const clientId = await getClientIdByUuid(user.id);
+            const clientId = Number((await getClientIdByUuid(user.id)).facturatie);
             logger.log(
               "setupUserConsumer",
               `Updating client with id: ${clientId}`,
               false,
             );
-            if (!(await fossbilling.userExists('', Number(clientId.facturatie)))) {
+            if (!(await fossbilling.userExists('', clientId))) {
               logger.log(
                 "setupUserConsumer",
-                `Client with id ${clientId.facturatie} does not exist.`,
+                `Client with id ${clientId} does not exist.`,
                 false,
               );
               channel.ack(msg);
               return;
             }
-            await fossbilling.updateClient(user, Number(clientId.facturatie));
+            await fossbilling.updateClient(user, clientId);
             logger.log(
               "setupUserConsumer",
-              `Updated client with id: ${clientId.facturatie}`,
+              `Updated client with id: ${clientId}`,
               false,
             );
             channel.ack(msg);
@@ -99,21 +99,21 @@ async function setupUserConsumer(connection) {
           break;
         case "delete":
           try {
-            if (!(await fossbilling.userExists(user.email))) {
-              logger.log(
-                "setupUserConsumer",
-                `Client with email ${user.email} does not exist.`,
-                false,
-              );
-              channel.ack(msg);
-              return;
-            }
-            const clientId = await getClientIdByUuid(user.id);
+            const clientId = Number((await getClientIdByUuid(user.id)).facturatie);
             logger.log(
               "setupUserConsumer",
               `Deleting client with id: ${clientId}`,
               false,
             );
+            if (!(await fossbilling.userExists(clientId))) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with id ${clientId} does not exist.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
             fossbilling.deleteClient(clientId);
             logger.log(
               "setupUserConsumer",
