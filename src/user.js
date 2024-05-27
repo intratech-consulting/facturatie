@@ -66,21 +66,21 @@ async function setupUserConsumer(connection) {
           break;
         case "update":
           try {
-            if (!(await fossbilling.userExists(user.email))) {
-              logger.log(
-                "setupUserConsumer",
-                `Client with email ${user.email} does not exist.`,
-                false,
-              );
-              channel.ack(msg);
-              return;
-            }
             const clientId = await getClientIdByUuid(user.id);
             logger.log(
               "setupUserConsumer",
               `Updating client with id: ${clientId}`,
               false,
             );
+            if (!(await fossbilling.userExists('', clientId))) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with id ${clientId} does not exist.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
             await fossbilling.updateClient(clientId, user);
             logger.log(
               "setupUserConsumer",

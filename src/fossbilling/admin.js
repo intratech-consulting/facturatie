@@ -145,6 +145,7 @@ class admin {
 
     async getClient( email, clientId = '') {
         try {
+            console.log("email:", email, ". clientId:", clientId);
             const response = await this.bbService.callMethod('client_get', [{ id: clientId, email: email }]);
             return response;
         } catch (error) {
@@ -173,9 +174,9 @@ class admin {
         }
     }
 
-    async userExists(email) {
+    async userExists(email, id='') {
         try {
-            await this.getClient(email);
+            await this.getClient(email, id);
             return true;
         } catch (error) {
             if (error.message.includes('Client not found')) {
