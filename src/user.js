@@ -161,7 +161,7 @@ async function setupUserConsumer(connection) {
               `Deleted client with id: ${clientId}`,
               false,
             );
-            await updateUuidToClientId(user.id, "NULL");
+            await updateUuidToClientId(user.id, "NONE");
             channel.ack(msg);
           } catch (error) {
             console.log("ERROR:", error)

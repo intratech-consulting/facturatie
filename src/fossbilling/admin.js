@@ -148,6 +148,16 @@ class admin {
         }
     }
 
+    async deleteOrder(orderId) {
+        try {
+            const response = await this.bbService.callMethod('order_delete', [{ id: orderId }]);
+            return response;
+        } catch (error) {
+            console.error(`Error deleting order: ${error}`);
+            throw error;
+        }
+    }
+
     async getClient(email, clientId = '') {
         try {
             console.log("email:", email, "| clientId:", clientId);
@@ -285,6 +295,7 @@ class admin {
                 await this.bbService.callMethod('invoice_mark_as_paid', [{ id: unpaidInvoiceId }]);
             }
 
+            console.log(`Order finished: ${orderId} \n\n Invoice Base64: ${invoiceDetails}`);
             return invoiceDetails;
         } catch (error) {
             console.error(`Error finishing order: ${error}`);
