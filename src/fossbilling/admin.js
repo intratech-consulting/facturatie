@@ -241,6 +241,7 @@ class admin {
                 for (let invoice of response.list) {
                     if (invoice.client_id === clientId) {
                         if (invoice.status !== 'paid') {
+                            console.log(`Client has invoice: ${invoice.id}`)
                             return true;
                         }
                     }
