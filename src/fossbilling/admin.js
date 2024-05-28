@@ -300,6 +300,16 @@ class admin {
             throw error;
         }
     }
+
+    async batchConnectHooks() {
+        try {
+            const response = await this.bbService.callMethod('hook_batch_connect', []);
+            return response;
+        } catch (error) {
+            console.error(`Error connecting hooks: ${error}`);
+            throw error;
+        }
+    }
 }
 
 module.exports = admin;

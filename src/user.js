@@ -17,41 +17,12 @@ async function setupUserPublisher(connection) {
   logger.log("setupUserPublisher", `Asserted exchange: ${constants.MAIN_EXCHANGE}`, false);
   let message = ""
 
-  console.log("getting hooks")
-  const hooks = await fossbilling.getHooks();
-  console.log("hooks", hooks)
+  console.log("connecting to hooks")
+  const response = await fossbilling.batchConnectHooks();
+  console.log("response:", response);
 
   // TODO: get updates from fossbilling clients
-  // Set up the Express app
-  // const app = express();
-  // app.use(bodyParser.json());
-
-  // // Endpoint to receive webhooks
-  // app.post('/webhook', async (req, res) => {
-  //     const event = req.body;
-  //     console.log('=='*50)
-
-  //     // Basic validation (adjust as necessary)
-  //     if (event && event.client && event.action === 'onAfterAdminCreateClient') {
-  //         //const message = JSON.stringify(event.client);
-  //         console.log('=='*50)
-          
-
-  //         res.status(200).send('Webhook received and processed');
-  //     } else {
-  //         res.status(400).send('Invalid webhook data');
-  //     }
-  // });
-
-  // // Start the Express server
-  // app.listen(constants.WEBHOOK_PORT, () => {
-  //     logger.log('setupUserPublisher', `Webhook listener running on port ${constants.WEBHOOK_PORT}`, false);
-  // });
-
-  //TODO: make client into message
   
-  // channel.publish(constants.MAIN_EXCHANGE, constants.USER_ROUTING, Buffer.from(message));
-  // logger.log("setupUserPublisher", `Published message: ${message}`, false);
 }
 
 async function setupUserConsumer(connection) {
