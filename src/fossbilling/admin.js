@@ -290,6 +290,16 @@ class admin {
             throw error;
         }
     }
+
+    async getHooks() {
+        try {
+            const response = await this.bbService.callMethod('hook_get_list', []);
+            return response;
+        } catch (error) {
+            console.error(`Error getting hooks: ${error}`);
+            throw error;
+        }
+    }
 }
 
 module.exports = admin;
