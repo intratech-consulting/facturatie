@@ -157,4 +157,4 @@ async function setupUserConsumer(connection) {
   );
 }
 
-module.exports = { setupUserConsumer, setupUserPublisher };
+module.exports = { setupUserPublisher, setupUserConsumer };
