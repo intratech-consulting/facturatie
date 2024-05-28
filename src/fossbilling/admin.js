@@ -55,6 +55,7 @@ class admin {
     async deleteClient(clientId) {
         console.log("clientId:", clientId)
         if (!this.checkClientInvoice(clientId)) {
+            console.log('before try')
             try {
                 console.log("client_delete")
                 const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
@@ -252,6 +253,7 @@ class admin {
             }
             page++;
         }
+        console.log('no invoices found')
         return false;
     }
 
