@@ -21,7 +21,7 @@ async function setupUserPublisher(connection) {
     //     channel.publish(exchange, constants.USER, Buffer.from(message));
     // };
 
-    channel.publish(exchange, '', Buffer.from('Hello World!'));
+    channel.publish(exchange, constants.USER_ROUTING, Buffer.from('Hello World!'));
 }
 
 module.exports = setupUserPublisher;
