@@ -19,7 +19,7 @@ async function setupUserPublisher(connection) {
 
   console.log("getting hooks")
   const hooks = fossbilling.getHooks();
-  onsole.log("hooks", hooks)
+  console.log("hooks", hooks)
 
   // TODO: get updates from fossbilling clients
   // Set up the Express app
