@@ -53,21 +53,22 @@ class admin {
     };
 
     async deleteClient(clientId) {
-        // if (!this.checkClientInvoice(clientId)) {
-        try {
-            const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
-            return response;
-        } catch (error) {
-            console.error(`Error deleting client: ${error}`);
-            throw error;
+        console.log("clientId:", clientId)
+        if (!await this.checkClientInvoice(clientId)) {
+            try {
+                console.log("client_delete")
+                const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
+                return response;
+            } catch (error) {
+                console.error(`Error deleting client: ${error}`);
+                throw error;
+            }
+        } else {
+            throw new Error('Client has invoices, can\'t be deleted.');
         }
-        // } else {
-        //     throw new Error('Client has invoices, can\'t be deleted.');
-        // }
     }
 
     async updateClient(updateData, clientId = updateData.id) {
-
         // Check if required parameters are provided
         if (!clientId) {
             throw new Error('client_id is required');
@@ -149,6 +150,7 @@ class admin {
 
     async getClient(email, clientId = '') {
         try {
+            console.log("email:", email, "| clientId:", clientId);
             const response = await this.bbService.callMethod('client_get', [{ id: clientId, email: email }]);
             return response;
         } catch (error) {
@@ -177,15 +179,12 @@ class admin {
         }
     }
 
-    async userExists(email) {
+    async userExists(email, id='') {
         try {
-            await this.getClient(email);
+            await this.getClient(email, id);
             return true;
         } catch (error) {
-            if (error.message.includes('Error getting client')) {
-                return false;
-            }
-            throw error;
+            return false;
         }
     }
 
@@ -241,6 +240,7 @@ class admin {
                 for (let invoice of response.list) {
                     if (invoice.client_id === clientId) {
                         if (invoice.status !== 'paid') {
+                            console.log(`Client has invoice: ${invoice.id}`)
                             return true;
                         }
                     }
@@ -251,6 +251,7 @@ class admin {
             }
             page++;
         }
+        console.log('no invoices found')
         return false;
     }
 
@@ -287,6 +288,26 @@ class admin {
             return invoiceDetails;
         } catch (error) {
             console.error(`Error finishing order: ${error}`);
+            throw error;
+        }
+    }
+
+    async getHooks() {
+        try {
+            const response = await this.bbService.callMethod('hook_get_list', []);
+            return response;
+        } catch (error) {
+            console.error(`Error getting hooks: ${error}`);
+            throw error;
+        }
+    }
+
+    async batchConnectHooks() {
+        try {
+            const response = await this.bbService.callMethod('hook_batch_connect', []);
+            return response;
+        } catch (error) {
+            console.error(`Error connecting hooks: ${error}`);
             throw error;
         }
     }

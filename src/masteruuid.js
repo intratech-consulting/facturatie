@@ -57,12 +57,13 @@ RESPONSE
 async function updateUuidToClientId(uuid, clientId) {
   let data = {
     MASTERUUID: uuid,
-    ServiceId: clientId,
+    NewServiceId: clientId,
     Service: serviceName,
   };
+  console.log(data);
   let request = {
     method: "POST",
-    url: address + "/UpdateServiceId",
+    url: address + "/updateServiceId",
     headers: {
       "Content-Type": "application/json",
     },

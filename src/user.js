@@ -1,4 +1,6 @@
 const amqp = require("amqplib");
+const express = require('express');
+const bodyParser = require('body-parser');
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const Logger = require("./logger");
 const logger = Logger.getLogger();
@@ -8,6 +10,44 @@ const constants = require("./constants");
 
 const parser = new XMLParser();
 const fossbilling = new FossbillingAdmin();
+
+async function setupUserPublisher(connection) {
+  const channel = await connection.createChannel();
+  await channel.assertExchange(constants.MAIN_EXCHANGE, "topic", { durable: true });
+  logger.log("setupUserPublisher", `Asserted exchange: ${constants.MAIN_EXCHANGE}`, false);
+
+  // Ensure the hook is connected
+  await fossbilling.getHooks();
+  await fossbilling.batchConnectHooks();  
+
+  // Set up the Express app
+  const app = express();
+  app.use(bodyParser.json());
+
+  // Endpoint to receive webhooks
+  app.post('/webhook', async (req, res) => {
+      const event = req.body;
+      console.log("GOT EVENT", event)
+
+      // Basic validation (adjust as necessary)
+      if (event && event.client && event.action === 'onAfterAdminCreateClient') {
+          const message = JSON.stringify(event.client);
+
+          // Publish the message to RabbitMQ
+          channel.publish(constants.MAIN_EXCHANGE, constants.USER_ROUTING, Buffer.from(message));
+          logger.log('setupUserPublisher', `Published message: ${message}`, false);
+
+          res.status(200).send('Webhook received and processed');
+      } else {
+          res.status(400).send('Invalid webhook data');
+      }
+  });
+
+  // Start the Express server
+  app.listen(constants.WEBHOOK_PORT, () => {
+      logger.log('setupUserPublisher', `Webhook listener running on port ${constants.WEBHOOK_PORT}`, false);
+  });
+}
 
 async function setupUserConsumer(connection) {
   const channel = await connection.createChannel();
@@ -66,22 +106,22 @@ async function setupUserConsumer(connection) {
           break;
         case "update":
           try {
-            if (!(await fossbilling.userExists(user.email))) {
-              logger.log(
-                "setupUserConsumer",
-                `Client with email ${user.email} does not exist.`,
-                false,
-              );
-              channel.ack(msg);
-              return;
-            }
-            const clientId = await getClientIdByUuid(user.id);
+            const clientId = Number((await getClientIdByUuid(user.id)).facturatie);
             logger.log(
               "setupUserConsumer",
               `Updating client with id: ${clientId}`,
               false,
             );
-            await fossbilling.updateClient(clientId, user);
+            if (!await fossbilling.userExists('', clientId)) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with id ${clientId} does not exist.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
+            await fossbilling.updateClient(user, clientId);
             logger.log(
               "setupUserConsumer",
               `Updated client with id: ${clientId}`,
@@ -99,22 +139,23 @@ async function setupUserConsumer(connection) {
           break;
         case "delete":
           try {
-            if (!(await fossbilling.userExists(user.email))) {
-              logger.log(
-                "setupUserConsumer",
-                `Client with email ${user.email} does not exist.`,
-                false,
-              );
-              channel.ack(msg);
-              return;
-            }
-            const clientId = await getClientIdByUuid(user.id);
+            const clientId = Number((await getClientIdByUuid(user.id)).facturatie);
             logger.log(
               "setupUserConsumer",
               `Deleting client with id: ${clientId}`,
               false,
             );
-            fossbilling.deleteClient(clientId);
+            if (!(await fossbilling.userExists('', clientId))) {
+              logger.log(
+                "setupUserConsumer",
+                `Client with id ${clientId} does not exist.`,
+                false,
+              );
+              channel.ack(msg);
+              return;
+            }
+            console.log("Deleting client with id: " + clientId)
+            await fossbilling.deleteClient(clientId);
             logger.log(
               "setupUserConsumer",
               `Deleted client with id: ${clientId}`,
@@ -123,6 +164,7 @@ async function setupUserConsumer(connection) {
             await updateUuidToClientId(user.id, "NULL");
             channel.ack(msg);
           } catch (error) {
+            console.log("ERROR:", error)
             logger.log(
               "setupUserConsumer",
               `Error during deletion - User UUID: ${user.id}.`,
@@ -146,4 +188,4 @@ async function setupUserConsumer(connection) {
   );
 }
 
-module.exports = setupUserConsumer;
+module.exports = { setupUserPublisher, setupUserConsumer };
