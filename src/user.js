@@ -18,7 +18,7 @@ async function setupUserPublisher(connection) {
   let message = ""
 
   console.log("getting hooks")
-  const hooks = admin.getHooks();
+  const hooks = fossbilling.getHooks();
   for (const hook of hooks) {
     console.log(hook)
   }
