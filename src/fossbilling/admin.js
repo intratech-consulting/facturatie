@@ -54,7 +54,7 @@ class admin {
 
     async deleteClient(clientId) {
         console.log("clientId:", clientId)
-        if (!this.checkClientInvoice(clientId)) {
+        if (!await this.checkClientInvoice(clientId)) {
             console.log('before try')
             try {
                 console.log("client_delete")
