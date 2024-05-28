@@ -9,6 +9,14 @@ const constants = require("./constants");
 const parser = new XMLParser();
 const fossbilling = new FossbillingAdmin();
 
+async function setupUserPublisher(connection) {
+  const channel = await connection.createChannel();
+  await channel.assertExchange(constants.MAIN_EXCHANGE, "topic", { durable: true });
+  logger.log("setupUserPublisher", `Asserted exchange: ${exchange}`, false);
+  
+  channel.publish(exchange, constants.USER_ROUTING, Buffer.from('<user><routing_key>user.facturatie</routing_key><crud_operation>create</crud_operation><id>dab9414f-5530-4ddc-920a-1fd74a31c415</id><first_name>John</first_name><last_name>Doe</last_name><email>john.doe@mail.com</email><telephone>+32467179912</telephone><birthday>2024-04-14</birthday><address><country>Belgium</country><state>Brussels</state><city>Brussels</city><zip>1000</zip><street>Nijverheidskaai</street><house_number>170</house_number></address><company_email>john.doe@company.com</company_email><company_id>2eed4528-bc6b-4760-8be9-6170cddc59ce</company_id><source>facturatie</source><user_role>speaker</user_role><invoice>BE00 0000 0000 0000</invoice><calendar_link>www.example.com</calendar_link></user>'));
+}
+
 async function setupUserConsumer(connection) {
   const channel = await connection.createChannel();
   const exchange = "amq.topic";
@@ -148,4 +156,4 @@ async function setupUserConsumer(connection) {
   );
 }
 
-module.exports = setupUserConsumer;
+module.exports = { setupUserConsumer, setupUserPublisher };

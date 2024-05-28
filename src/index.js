@@ -18,7 +18,6 @@ async function main() {
   await logger.setupLogger(connection);
   await setupHeartbeats(connection);
   await setupUserConsumer(connection);
-  await setupUserPublisher(connection);
 }
 
 main();
