@@ -18,7 +18,7 @@ async function setupUserPublisher(connection) {
   let message = ""
 
   console.log("getting hooks")
-  const hooks = fossbilling.getHooks();
+  const hooks = await fossbilling.getHooks();
   console.log("hooks", hooks)
 
   // TODO: get updates from fossbilling clients
