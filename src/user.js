@@ -1,5 +1,6 @@
 const amqp = require("amqplib");
 const express = require('express');
+const bodyParser = require('body-parser');
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const Logger = require("./logger");
 const logger = Logger.getLogger();
