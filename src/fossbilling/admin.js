@@ -55,11 +55,9 @@ class admin {
     async deleteClient(clientId) {
         console.log("clientId:", clientId)
         if (!await this.checkClientInvoice(clientId)) {
-            console.log('before try')
             try {
                 console.log("client_delete")
                 const response = await this.bbService.callMethod('client_delete', [{ id: clientId }]);
-                console.log("response:", response)
                 return response;
             } catch (error) {
                 console.error(`Error deleting client: ${error}`);
