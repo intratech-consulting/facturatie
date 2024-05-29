@@ -6,6 +6,7 @@ const logger = require("./logger").getLogger();
 const FossbillingAdmin = require("./fossbilling/admin");
 const { getClientIdByUuid } = require("./masteruuid");
 const constants = require("./constants");
+const e = require("express");
 
 const parser = new XMLParser();
 const builder = new XMLBuilder();
@@ -28,25 +29,28 @@ async function setupInvoicePublisher(connection) {
 }
 
 async function setupOrderConsumer(order, channel, msg, connection) {
-  
+
   await setupInvoicePublisher(connection);
 
   switch (order.crud_operation) {
     case "create":
       try {
-        const clientId = (await getClientIdByUuid(order.user_id)).facturatie;
+        if (!order.user_id === '') {
+          const clientId = (await getClientIdByUuid(order.user_id)).facturatie;
+        } else { 
+          return;
+        };
         const client = await fossbilling.getClient('', clientId);
         const productId = await getClientIdByUuid(order.products.product.product_id);
         order.products.product.product_id = productId.facturatie;
+        console.log(order)
         const invoicePDFBase64 = await fossbilling.finishOrder(order, clientId);
         console.log('order created, invoice retrieved')
         let invoice = {
-          Invoice: {
             filename:
               client.first_name + "_" + client.last_name + "_" + order.id + ".pdf",
             email: client.email,
             pdfBase64: invoicePDFBase64,
-          },
         };
         
         const xml = builder.build({ invoice });

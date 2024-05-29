@@ -64,6 +64,16 @@ async function setupProductConsumer(product, channel, msg) {
     case "delete":
       try {
         const productId = Number((await getProductIdByUuid(product.id)).facturatie);
+        console.log('deleting product', productId)
+        if (productId === "NULL") {
+          logger.log(
+            "setupProductConsumer",
+            `Product with UUID ${product.id} does not exist.`,
+            false,
+          );
+          channel.ack(msg);
+          return;
+        }
         logger.log(
           "setupProductConsumer",
           `Deleting product with ID: ${productId}`,
