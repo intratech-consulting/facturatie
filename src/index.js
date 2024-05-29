@@ -17,12 +17,11 @@ async function main() {
   let logger = new Logger();
   await logger.setupLogger(connection);
   await setupHeartbeats(connection);
+
   await setupUserConsumer(connection);
-
   await setupUserPublisher(connection);
+  
   await setupProductConsumer(connection);
-
-  //await setupUserPublisher(connection);
 
 }
 

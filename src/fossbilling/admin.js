@@ -169,6 +169,16 @@ class admin {
         }
     }
 
+    async getClinetList() {
+        try {
+            const response = await this.bbService.callMethod('client_get_list', []);
+            return response;
+        } catch (error) {
+            console.error(`Error getting client list: ${error}`);
+            throw error;
+        }
+    }
+
     async getCartList() {
         try {
             const response = await this.bbService.callMethod('cart_get_list', []);

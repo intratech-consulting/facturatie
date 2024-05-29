@@ -1,5 +1,4 @@
 const amqp = require("amqplib");
-const express = require('express');
 const bodyParser = require('body-parser');
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const Logger = require("./logger");
@@ -10,42 +9,42 @@ const constants = require("./constants");
 const parser = new XMLParser();
 const fossbilling = new FossbillingAdmin();
 
+let users;
+
 async function setupUserPublisher(connection) {
   const channel = await connection.createChannel();
   await channel.assertExchange(constants.MAIN_EXCHANGE, "topic", { durable: true });
   logger.log("setupUserPublisher", `Asserted exchange: ${constants.MAIN_EXCHANGE}`, false);
 
-  // Ensure the hook is connected
-  await fossbilling.getHooks();
-  await fossbilling.batchConnectHooks();  
+  try {
+    users = await fossbilling.getClients();
+    console.log("Users: " + users)
+  } catch (error) {
+    logger.log("setupUserPublisher", "Error during fetching clients.", true);
+    return;
+  }
 
-  // Set up the Express app
-  const app = express();
-  app.use(bodyParser.json());
-
-  // Endpoint to receive webhooks
-  app.post('/webhook', async (req, res) => {
-      const event = req.body;
-      console.log("GOT EVENT", event)
-
-      // Basic validation (adjust as necessary)
-      if (event && event.client && event.action === 'onAfterAdminCreateClient') {
-          const message = JSON.stringify(event.client);
-
-          // Publish the message to RabbitMQ
-          channel.publish(constants.MAIN_EXCHANGE, constants.USER_ROUTING, Buffer.from(message));
-          logger.log('setupUserPublisher', `Published message: ${message}`, false);
-
-          res.status(200).send('Webhook received and processed');
-      } else {
-          res.status(400).send('Invalid webhook data');
+  while (true) {
+    setTimeout(async () => {
+      let newUsers = await fossbilling.getClients();
+      let diff = newUsers.filter(x => !users.includes(x));
+      users = newUsers;
+      print("Diff: " + diff)
+      for (let user of diff) {
+        user.routing_key = constants.USER_ROUTING;
+        const builder = new XMLBuilder();
+        const xml = builder.build({ user: user });
+        if(!XMLValidator.validate(xml)) {
+          console.log("ERROR: XML validation failed")
+          logger.log("setupUserPublisher", `XML validation failed`, true);
+          return;
+        }
+        console.log("Publishing message: " + xml);
+        channel.publish(constants.MAIN_EXCHANGE, constants.USER_ROUTING, Buffer.from(xml));
+        logger.log('setupUserPublisher', `Published message: ${xml}`, false);
       }
-  });
-
-  // Start the Express server
-  app.listen(constants.WEBHOOK_PORT, () => {
-      logger.log('setupUserPublisher', `Webhook listener running on port ${constants.WEBHOOK_PORT}`, false);
-  });
+    }, 10000)
+  }
 }
 
 async function setupUserConsumer(connection) {
