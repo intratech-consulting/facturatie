@@ -47,9 +47,6 @@ class BoxBillingService {
             const response = await this.httpClient.post(url, data);
             const result = response.data;
 
-            // Log the 'set-cookie' headers
-            console.log('Set-Cookie headers:', response.headers['set-cookie']);
-
             if (response.status !== 200) {
                 throw new Error(`BoxBilling API returned error: ${response.statusText}`);
             }
@@ -77,7 +74,6 @@ class BoxBillingService {
         const method = methodName.substring(underscoreIndex + 1);
         const data = args.length > 0 ? args[0] : {};
         const cookies = await this.cookieJar.getCookies(this.apiUrl);
-        console.log('Cookies:', cookies);
         return await this.callApi(module, method, data);
     }
 }

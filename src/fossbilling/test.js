@@ -72,6 +72,18 @@ let orderData =
         <status>paid</status>
     </order>`;
 
+let productData = 
+    `<product>
+        <routing_key>product.crm</routing_key>
+        <crud_operation>create</crud_operation>
+        <id>123</id>
+        <name>Coca Cola</name>
+        <price>2.50</price>
+        <amount>3</amount>
+        <category>Soft drinks</category>
+        <btw>0.50</btw>
+    </product>`;
+
 
 let updateData = 
     `<user>
@@ -368,6 +380,20 @@ async function test_finishOrder(orderData, clientId) {
     }
 }
 
+async function test_createProduct(productData) {
+    try {
+        const jsonProductData = await test_xmlToJson(productData);
+        const response = await admin.createProduct(jsonProductData.product);
+        logToFile(JSON.stringify(response, null, 2));
+        console.log("product created", response);
+    } catch (error) {
+        console.error("Error in test_createProduct:", error);
+        // Log detailed error information to the file
+        const errorMessage = `Error creating product: ${error.message}\nURL: ${error.config?.url}\nStatus: ${error.response?.status}\nData: ${error.config?.data}`;
+        logToFile(errorMessage);
+    }
+}
+
 // functie om de testen uit te voeren
 async function runTests() {
     // await test_xmlToJson(userData);
@@ -424,7 +450,7 @@ async function runTests() {
     // const invoiceHash = 'eba00351b326bb22ebee817ab67deec237abc135476a4d06451a7e8c57485c10c0b019b2f1477d6bb720e63ec0130fa71fd97124ff40fd3209ffb705844602c536886464214eb8e9f74c0bc86175c8b1a127cd01216a001b0001d05fd1793b985e1f5ccda02ab85f460b1497e7e03b';
     // await test_viewInvoice(invoiceHash);
     // await test_getInvoiceList();
-    await test_checkClientInvoice(4);
+    // await test_checkClientInvoice(4);
     // await test_finishOrder(orderData, clientId);
     // await test_updateClient(updateData, clientID);
     // await new Promise((resolve) => {
@@ -433,6 +459,8 @@ async function runTests() {
     //     });
     // });
     // await test_batchExpire();
+    await test_createProduct(productData);
+    // await admin.getTypes();
     // await new Promise((resolve) => {
     //     process.stdin.once('data', () => {
     //         resolve();

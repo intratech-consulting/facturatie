@@ -322,6 +322,69 @@ class admin {
             throw error;
         }
     }
+    
+    async prepareProduct(productData) {
+        // Check if required parameters are provided
+        if (!productData.name) {
+            throw new Error('name is required');
+        }
+
+        const product = {
+            title: productData.name,
+            type: 'custom',
+        };
+
+        try {
+            const response = await this.bbService.callMethod('product_prepare', [product]);
+            return response;
+        } catch (error) {
+            console.error(`Error creating product: ${error}`);
+            throw error;
+        }
+    }
+
+    async updateProduct(productData, productId = productData.id) {
+        // Check if required parameters are provided
+        if (!productId) {
+            throw new Error('product_id is required');
+        }
+
+        const product = {
+            id: productId,
+            status: "Enabled"
+        };
+
+        try {
+            const response = await this.bbService.callMethod('product_update', [product]);
+            return response;
+        } catch (error) {
+            console.error(`Error updating product: ${error}`);
+            throw error;
+        }
+    }
+
+    async createProduct(productData) {
+        // Check if required parameters are provided
+        
+        const productId = await this.prepareProduct(productData);
+
+        await this.updateProduct(productData, productId);
+
+        return productId;
+    }
+
+    async getTypes() {
+        try {
+            const response = await this.bbService.callMethod('product_get_types', []);
+            console.log(response);
+            return response;
+        } catch (error) {
+            console.error(`Error getting types: ${error}`);
+            throw error;
+        }
+    }
+
+
 }
 
 module.exports = admin;
