@@ -132,4 +132,128 @@ async function getUuidByClientId(clientId) {
   return json;
 }
 
-module.exports = { linkUuidToClientId, getClientIdByUuid, getUuidByClientId, updateUuidToClientId };
+/*
+POST /addProductUuid
+{
+  "MasterUuid": "<uuid>",
+  "ProductId": "<product_id>",
+  "Service": "<service_name>"
+}
+RESPONSE
+{
+  "success": true,
+  "message": "Product UUID successfully added."
+}
+*/
+async function linkUuidToProductId(uuid, productId) {
+  let data = {
+    MasterUuid: uuid,
+    ServiceId: productId,
+    Service: serviceName,
+  };
+  let request = {
+    method: "POST",
+    url: address + "/addServiceId",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
+  };
+  let response = await axios(request);
+  let json = await response.data;
+  return json;
+}
+
+/*
+POST /updateProductUuid
+{
+  "MasterUuid": "<uuid>",
+  "ProductId": "<product_id>",
+  "Service": "<service_name>"
+}
+RESPONSE
+{
+    "success": true,
+    "message": "Product UUID successfully updated."
+}
+*/
+async function updateUuidToProductId(uuid, productId) {
+  let data = {
+    MasterUuid: uuid,
+    NewServiceId: productId,
+    Service: serviceName,
+  };
+  let request = {
+    method: "POST",
+    url: address + "/updateServiceId",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
+  };
+  let response = await axios(request);
+  let json = await response.data;
+  return json;
+}
+
+/*
+POST /getProductId
+{
+  "MasterUuid": "<uuid>",
+  "Service": "<service_name>"
+}
+RESPONSE
+{
+  "<service_name>": "<product_id>"
+}
+*/
+async function getProductIdByUuid(uuid) {
+  let data = {
+    MasterUuid: uuid,
+    Service: serviceName,
+  };
+  let request = {
+    method: "POST",
+    url: address + "/getServiceId",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
+  };
+  let response = await axios(request);
+  let json = await response.data;
+  return json;
+}
+
+/*
+POST /getMasterUuidByProduct
+{
+  "ProductId": "<product_id>",
+  "Service": "<service_name>"
+}
+RESPONSE
+{
+  "UUID": "<uuid>"
+}
+*/
+async function getUuidByProductId(productId) {
+  let data = {
+    ServiceId: productId,
+    Service: serviceName,
+  };
+  let request = {
+    method: "POST",
+    url: address + "/getMasterUuid",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
+  };
+  let response = await axios(request);
+  let json = await response.data;
+  return json;
+}
+
+
+
+module.exports = { linkUuidToClientId, getClientIdByUuid, getUuidByClientId, updateUuidToClientId, linkUuidToProductId, getProductIdByUuid, getUuidByProductId, updateUuidToProductId };

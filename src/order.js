@@ -26,83 +26,56 @@ async function setupInvoicePublisher(connection) {
   );
 }
 
-async function setupOrderConsumer(connection) {
-  const channel = await connection.createChannel();
-  const queue = constants.SYSTEM;
-  await channel.assertExchange(constants.MAIN_EXCHANGE, "topic", {
-    durable: true,
-  });
-  logger.log(
-    "setupOrderConsumer",
-    `Asserted exchange: ${constants.MAIN_EXCHANGE}`,
-    false,
-  );
-  await channel.assertQueue(queue, { durable: true });
-  logger.log("setupOrderConsumer", `Asserted queue: ${queue}`, false);
-  logger.log("setupOrderConsumer", `Start consuming messages: ${queue}`, false);
-  channel.consume(
-    queue,
-    async function (msg) {
+async function setupOrderConsumer(order, channel, msg) {
+  switch (order.crud_operation) {
+    case "create":
+      try {
+        const clientId = await getClientIdByUuid(order.user_id);
+        const client = await fossbilling.getClient(clientId);
+        const productId = await getClientIdByUuid(order.products[0].product_id);
+        order.products[0].product_id = productId;
+        const invoicePDFBase64 = await fossbilling.createOrder(order, clientId);
+        let invoice = {
+          Invoice: {
+            filename:
+              client.name + "_" + client.lastname + "_" + order.id + ".pdf",
+            email: client.email,
+            pdfBase64: invoicePDFBase64,
+          },
+        };
+        const xml = XMLBuilder.buildObject(invoice);
+        invoicePublisherChannel.publish(
+          constants.MAIN_EXCHANGE,
+          constants.INVOICE_ROUTING,
+          Buffer.from(xml),
+        );
+        channel.ack(msg);
+      } catch (error) {
+        logger.log(
+          "setupOrderConsumer",
+          `Nack message: ${msg.content.toString()}`,
+          true,
+        );
+        channel.nack(msg);
+      }
+      break;
+    case "update":
       logger.log(
         "setupOrderConsumer",
-        `Received message: ${msg.content.toString()}`,
-        false,
+        `Unsupported operation: ${msg.content.toString()}`,
+        true,
       );
-      const object = parser.parse(msg.content.toString());
-      switch (user.crud_operation) {
-        case "create":
-          try {
-            const clientId = await getClientIdByUuid(object.order.user_id);
-            const client = await fossbilling.getClient(clientId);
-            const productId = await getClientIdByUuid(object.order.products[0].product_id);
-            object.order.products[0].product_id = productId;
-            const invoicePDFBase64 = await fossbilling.createOrder(object.order, clientId);
-            let invoice = {
-              Invoice: {
-                filename:
-                  client.name + "_" + client.lastname + "_" + order.id + ".pdf",
-                email: client.email,
-                pdfBase64: invoicePDFBase64,
-              },
-            };
-            const xml = XMLBuilder.buildObject(invoice);
-            invoicePublisherChannel.publish(
-              constants.MAIN_EXCHANGE,
-              constants.INVOICE_ROUTING,
-              Buffer.from(xml),
-            );
-            channel.ack(msg);
-          } catch (error) {
-            logger.log(
-              "setupOrderConsumer",
-              `Nack message: ${msg.content.toString()}`,
-              true,
-            );
-            channel.nack(msg);
-          }
-          break;
-        case "update":
-          logger.log(
-            "setupOrderConsumer",
-            `Unsupported operation: ${msg.content.toString()}`,
-            true,
-          );
-          channel.nack(msg);
-          return;
-        case "delete":
-          logger.log(
-            "setupOrderConsumer",
-            `Unsupported operation: ${msg.content.toString()}`,
-            true,
-          );
-          channel.nack(msg);
-          return;
-      }
-    },
-    {
-      noAck: false,
-    },
-  );
+      channel.nack(msg);
+      return;
+    case "delete":
+      logger.log(
+        "setupOrderConsumer",
+        `Unsupported operation: ${msg.content.toString()}`,
+        true,
+      );
+      channel.nack(msg);
+      return;
+  }
 }
 
 module.exports = { setupInvoicePublisher, setupOrderConsumer };
