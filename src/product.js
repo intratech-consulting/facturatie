@@ -31,11 +31,12 @@ async function setupProductConsumer(connection) {
             false
         );
         const object = parser.parse(msg.content.toString());
-        const product = object.product;
-
-        if (!product.routing_key.startsWith("product")) {
-          return;
+        if (!object.product) {
+            logger.log("setupProductConsumer", "No product object found.", true);
+            channel.nack(msg, true);
+            return;
         }
+        const product = object.product;
 
         switch (product.crud_operation) {
             case "create":

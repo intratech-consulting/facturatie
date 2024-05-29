@@ -49,11 +49,12 @@ async function setupOrderConsumer(connection) {
         false,
       );
       const object = parser.parse(msg.content.toString());
-      const order = object.order;
-
-      if (!order.routing_key.startsWith("order")) {
+      if (!object.order) {
+        logger.log("setupOrderConsumer", "No order object found.", true);
+        channel.nack(msg, true);
         return;
       }
+      const order = object.order;
 
       switch (order.crud_operation) {
         case "create":

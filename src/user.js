@@ -66,10 +66,12 @@ async function setupUserConsumer(connection) {
         false,
       );
       const object = parser.parse(msg.content.toString());
-      const user = object.user;
-      if (!user.routing_key.startsWith("user")) {
+      if (!object.user) {
+        logger.log("setupUserConsumer", "No user object found.", true);
+        channel.nack(msg, true);
         return;
       }
+      const user = object.user;
 
       switch (user.crud_operation) {
         case "create":

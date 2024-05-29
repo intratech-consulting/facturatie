@@ -20,8 +20,10 @@ async function main() {
 
   await setupUserConsumer(connection);
   await setupUserPublisher(connection);
-  
+
   await setupProductConsumer(connection);
+
+  await setupOrderConsumer(connection);
 
 }
 
