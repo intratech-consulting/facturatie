@@ -126,9 +126,9 @@ class admin {
         // Prepare the data for the API call
         const data = {
             client_id: clientID,
-            product_id: orderData.products.product[0].product_id,
+            product_id: orderData.products.product.product_id,
             config: orderData.config || {},
-            quantity: orderData.products.product[0].amount || 1,
+            quantity: orderData.products.product.amount || 1,
             price: orderData.total_price,
             company: orderData.company_id || "",
             currency: "",
