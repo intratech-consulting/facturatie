@@ -28,6 +28,10 @@ async function setupInvoicePublisher(connection) {
 }
 
 async function setupOrderConsumer(order, channel, msg) {
+
+  const connection = await amqp.connect('amqp://localhost');
+  await setupInvoicePublisher(connection);
+  
   switch (order.crud_operation) {
     case "create":
       try {
