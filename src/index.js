@@ -17,7 +17,6 @@ async function main() {
   let logger = new Logger();
   await logger.setupLogger(connection);
   await setupHeartbeats(connection);
-  await setupInvoicePublisher(connection);
   await setupConsumer(connection);
 
   //await setupUserPublisher(connection);
