@@ -169,7 +169,7 @@ class admin {
         }
     }
 
-    async getClinetList() {
+    async getClientList() {
         try {
             const response = await this.bbService.callMethod('client_get_list', []);
             return response;

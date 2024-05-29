@@ -26,7 +26,7 @@ async function setupUserPublisher(connection) {
 
   while (true) {
     setTimeout(async () => {
-      let newUsers = await fossbilling.getClients();
+      let newUsers = await fossbilling.getClientList();
       let diff = newUsers.filter(x => !users.includes(x));
       users = newUsers;
       print("Diff: " + diff)
