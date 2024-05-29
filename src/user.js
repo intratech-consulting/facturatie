@@ -7,7 +7,7 @@ const logger = Logger.getLogger();
 const FossbillingAdmin = require("./fossbilling/admin");
 const { getClientIdByUuid, linkUuidToClientId, updateUuidToClientId } = require("./masteruuid");
 const constants = require("./constants");
-
+const libxmljs = require("libxmljs2");
 const parser = new XMLParser();
 const fossbilling = new FossbillingAdmin();
 
@@ -161,8 +161,26 @@ async function setupUserConsumer(connection) {
               `Deleted client with id: ${clientId}`,
               false,
             );
+
             await updateUuidToClientId(user.id, "NULL");
+
+           
+
             channel.ack(msg);
+            console.log("Return hard delete message")
+            user.routing_key = constants.USER_ROUTING;
+            const builder = new XMLBuilder();
+            const xml = builder.build({ user: user });
+            const xsdDoc = libxmljs.parseXml(constants.USER_XSD);
+            const xmlDoc = libxmljs.parseXml(xml);
+            if(!xmlDoc.validate(xsdDoc)) {
+              console.log("ERROR: XML validation failed")
+              logger.log("setupUserConsumer", `XML validation failed`, true);
+              return;
+            }
+            console.log("Publishing message: " + xml);
+            channel.publish(constants.MAIN_EXCHANGE, constants.USER_ROUTING, Buffer.from(xml));
+            logger.log('setupUserPublisher', `Published message: ${xml}`, false);
           } catch (error) {
             console.log("ERROR:", error)
             logger.log(

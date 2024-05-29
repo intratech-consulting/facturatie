@@ -137,6 +137,7 @@ const USER_XSD = `
 
 const COMPANY_XSD = `
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
     <xs:element name="company">
         <xs:complexType>
             <xs:sequence>
@@ -205,20 +206,12 @@ const COMPANY_XSD = `
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="type">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:enumeration value="customer"/>
-                            <xs:enumeration value="sponsor"/>
-                            <xs:enumeration value="speaker"/>
-                            <xs:enumeration value=""/>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:element>
+                <xs:element name="sponsor" type="xs:boolean" nillable="true"/>
                 <xs:element name="invoice" type="xs:string" nillable="true"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
 </xs:schema>
 `;
 
