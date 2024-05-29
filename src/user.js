@@ -163,6 +163,10 @@ async function setupUserConsumer(connection) {
             );
             await updateUuidToClientId(user.id, "NONE");
             channel.ack(msg);
+            user.routing_key = constants.USER_ROUTING;
+            const message = XMLBuilder.buildObject({ user });
+            console.log("Publishing message: " + message)
+            channel.publish(constants.MAIN_EXCHANGE, constants.USER_ROUTING, Buffer.from(message));
           } catch (error) {
             console.log("ERROR:", error)
             logger.log(
