@@ -285,6 +285,22 @@ class admin {
         }
     }
 
+    async updateInvoice(invoiceId) {
+
+        const data = {
+            gateway_id: 1,
+            id: invoiceId
+        };
+
+        try {
+            const response = await this.bbService.callMethod('invoice_update', [data]);
+            return response;
+        } catch (error) {
+            console.error(`Error updating invoice: ${error}`);
+            throw error;
+        }
+    }
+
     async finishOrder(orderData, clientId = orderData.id) {
 
         try {
@@ -296,6 +312,8 @@ class admin {
 
             // Get the unpaid_invoice_id
             const unpaidInvoiceId = orderDetails.unpaid_invoice_id;
+
+            await this.updateInvoice(unpaidInvoiceId);
 
             // Get the invoice details
             const invoiceDetails = await this.getInvoice(unpaidInvoiceId);
