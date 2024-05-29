@@ -15,7 +15,6 @@ async function main() {
   let logger = new Logger();
   await logger.setupLogger(connection);
   await setupHeartbeats(connection);
-
   await setupConsumer(connection);
 
 }

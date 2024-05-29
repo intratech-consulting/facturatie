@@ -50,4 +50,4 @@ async function setupConsumer(connection) {
   );
 }
 
-module.exports = { setupConsumer };
+module.exports = setupConsumer;
