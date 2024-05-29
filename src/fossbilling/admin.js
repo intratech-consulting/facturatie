@@ -1,6 +1,7 @@
 const axios = require("axios");
 const BoxBillingService = require("./bbService");
 const Encryption = require("./encryption");
+const { response } = require("express");
 require("dotenv").config();
 
 class admin {
@@ -325,15 +326,17 @@ class admin {
                 // Mark the invoice as paid in case the order is paid
                 const data = {
                     id: unpaidInvoiceId,
-                    transactionId: unpaidInvoiceId
+                    transactionId: unpaidInvoiceId,
+                    execute: 1
                 };
                 console.log('data:', data)
-                await this.bbService.callMethod('invoice_mark_as_paid', [{ id: unpaidInvoiceId, transactionId: unpaidInvoiceId }]);
+                const response = await this.bbService.callMethod('invoice_mark_as_paid', [data]);
             }
 
             console.log(`Order finished: ${orderId} \n\n Invoice Base64: ${invoiceDetails}`);
             return invoiceDetails;
         } catch (error) {
+            console.log(response)
             console.error(`Error finishing order: ${error}`);
             throw error;
         }
