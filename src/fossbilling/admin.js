@@ -314,10 +314,12 @@ class admin {
             const unpaidInvoiceId = orderDetails.unpaid_invoice_id;
             console.log(`Unpaid Invoice ID: ${unpaidInvoiceId}`);
 
-            await this.updateInvoice(unpaidInvoiceId);
+            const response = await this.updateInvoice(unpaidInvoiceId);
+            console.log(`Invoice updated: ${response}`);
 
             // Get the invoice details
             const invoiceDetails = await this.getInvoice(unpaidInvoiceId);
+            
 
             if (orderData.status === 'paid') {
                 // Mark the invoice as paid in case the order is paid
