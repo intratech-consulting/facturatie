@@ -7,7 +7,6 @@ const logger = Logger.getLogger();
 const FossbillingAdmin = require("./fossbilling/admin");
 const { getClientIdByUuid, linkUuidToClientId, updateUuidToClientId } = require("./masteruuid");
 const constants = require("./constants");
-const libxmljs = require("libxmljs2");
 const parser = new XMLParser();
 const fossbilling = new FossbillingAdmin();
 
@@ -167,9 +166,7 @@ async function setupUserConsumer(connection) {
             user.routing_key = constants.USER_ROUTING;
             const builder = new XMLBuilder();
             const xml = builder.build({ user: user });
-            const xsdDoc = libxmljs.parseXml(constants.USER_XSD);
-            const xmlDoc = libxmljs.parseXml(xml);
-            if(!xmlDoc.validate(xsdDoc)) {
+            if(!XMLValidator.validate(xml)) {
               console.log("ERROR: XML validation failed")
               logger.log("setupUserConsumer", `XML validation failed`, true);
               return;
