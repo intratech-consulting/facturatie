@@ -33,7 +33,7 @@ async function setupConsumer(connection) {
       } else if (object.order) {
         console.log("received order ", object.order)
         const order = object.order;
-        await setupOrderConsumer(order, channel, msg);
+        await setupOrderConsumer(order, channel, msg, connection);
       } else if (object.product) {
         console.log("received product ", object.product)
         const product = object.product;
