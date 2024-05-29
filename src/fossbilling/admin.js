@@ -323,6 +323,11 @@ class admin {
 
             if (orderData.status === 'paid') {
                 // Mark the invoice as paid in case the order is paid
+                const data = {
+                    id: unpaidInvoiceId,
+                    transactionId: unpaidInvoiceId
+                };
+                console.log('data:', data)
                 await this.bbService.callMethod('invoice_mark_as_paid', [{ id: unpaidInvoiceId, transactionId: unpaidInvoiceId }]);
             }
 
