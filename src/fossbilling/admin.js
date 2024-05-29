@@ -119,7 +119,7 @@ class admin {
     async createOrder(orderData, clientID = orderData.id) {
 
         // Check if required parameters are provided
-        if (!orderData.id || !orderData.products.product[0].product_id) {
+        if (!orderData.id || !orderData.products.product.product_id) {
             throw new Error('client_id and product_id are required');
         }
 
