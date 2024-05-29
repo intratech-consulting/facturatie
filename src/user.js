@@ -161,10 +161,7 @@ async function setupUserConsumer(connection) {
               false,
             );
 
-            await updateUuidToClientId(user.id, "NULL");
-
-           
-
+            await updateUuidToClientId(user.id, null);
             channel.ack(msg);
             console.log("Return hard delete message")
             user.routing_key = constants.USER_ROUTING;
