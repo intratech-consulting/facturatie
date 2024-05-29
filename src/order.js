@@ -27,7 +27,7 @@ async function setupInvoicePublisher(connection) {
   );
 }
 
-async function setupOrderConsumer(order, channel, msg, invoicePublisherChannel) {
+async function setupOrderConsumer(order, channel, msg) {
   switch (order.crud_operation) {
     case "create":
       try {
