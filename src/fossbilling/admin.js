@@ -134,7 +134,7 @@ class admin {
             company: orderData.company_id || "",
             currency: "",
             title: orderData.products.product.name || "Cola",
-            activate: orderData.activate,
+            status: "active",
             invoice_option: "issue-invoice",
             created_at: orderData.created_at,
             updated_at: orderData.updated_at
@@ -286,12 +286,20 @@ class admin {
         }
     }
 
-    async updateInvoice(invoiceId) {
+    async updateInvoice(invoiceId, status) {
 
-        const data = {
-            gateway_id: 1,
-            id: invoiceId
-        };
+        if (status === 'paid') {
+            const data = {
+                gateway_id: 1,
+                id: invoiceId,
+                status: "paid",
+            };
+        } else {
+            const data = {
+                gateway_id: 1,
+                id: invoiceId,
+            };
+        }
 
         try {
             const response = await this.bbService.callMethod('invoice_update', [data]);
@@ -315,23 +323,23 @@ class admin {
             const unpaidInvoiceId = orderDetails.unpaid_invoice_id;
             console.log(`Unpaid Invoice ID: ${unpaidInvoiceId}`);
 
-            const response = await this.updateInvoice(unpaidInvoiceId);
+            const response = await this.updateInvoice(unpaidInvoiceId, orderData.status);
             console.log(`Invoice updated: ${response}`);
 
             // Get the invoice details
             const invoiceDetails = await this.getInvoice(unpaidInvoiceId);
             
 
-            if (orderData.status === 'paid') {
-                // Mark the invoice as paid in case the order is paid
-                const data = {
-                    id: unpaidInvoiceId,
-                    transactionId: unpaidInvoiceId,
-                    execute: 1
-                };
-                console.log('data:', data)
-                const response = await this.bbService.callMethod('invoice_mark_as_paid', [data]);
-            }
+            // if (orderData.status === 'paid') {
+            //     // Mark the invoice as paid in case the order is paid
+            //     const data = {
+            //         id: unpaidInvoiceId,
+            //         transactionId: unpaidInvoiceId,
+            //         execute: 1
+            //     };
+            //     console.log('data:', data)
+            //     const response = await this.bbService.callMethod('invoice_mark_as_paid', [data]);
+            // }
 
             console.log(`Order finished: ${orderId} \n\n Invoice Base64: ${invoiceDetails}`);
             return invoiceDetails;
