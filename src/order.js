@@ -32,10 +32,11 @@ async function setupOrderConsumer(order, channel, msg) {
       try {
         const clientId = (await getClientIdByUuid(order.user_id)).facturatie;
         const client = await fossbilling.getClient('', clientId);
-        console.log('Client: ', client)
         const productId = await getClientIdByUuid(order.products[0].product_id);
         order.products[0].product_id = productId;
+        console.log("Order: " + JSON.stringify(order));
         const invoicePDFBase64 = await fossbilling.finishOrder(order, clientId);
+        console.log('order created, invoice retrieved')
         let invoice = {
           Invoice: {
             filename:
@@ -44,12 +45,15 @@ async function setupOrderConsumer(order, channel, msg) {
             pdfBase64: invoicePDFBase64,
           },
         };
+        
         const xml = XMLBuilder.buildObject(invoice);
+        console.log('publishing invoice')
         invoicePublisherChannel.publish(
           constants.MAIN_EXCHANGE,
           constants.INVOICE_ROUTING,
           Buffer.from(xml),
         );
+        console.log('invoice published')
         channel.ack(msg);
       } catch (error) {
         logger.log(
