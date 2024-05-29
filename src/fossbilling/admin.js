@@ -323,10 +323,8 @@ class admin {
 
             // Get the unpaid_invoice_id
             const unpaidInvoiceId = orderDetails.unpaid_invoice_id;
-            console.log(`Unpaid Invoice ID: ${unpaidInvoiceId}`);
 
-            const response = await this.updateInvoice(unpaidInvoiceId, orderData.status);
-            console.log(`Invoice updated: ${response}`);
+            await this.updateInvoice(unpaidInvoiceId, orderData.status);
 
             // Get the invoice details
             const invoiceDetails = await this.getInvoice(unpaidInvoiceId);
@@ -343,10 +341,9 @@ class admin {
             //     const response = await this.bbService.callMethod('invoice_mark_as_paid', [data]);
             // }
 
-            console.log(`Order finished: ${orderId} \n\n Invoice Base64: ${invoiceDetails}`);
+            console.log(`Order finished in Base64`);
             return invoiceDetails;
         } catch (error) {
-            console.log(response)
             console.error(`Error finishing order: ${error}`);
             throw error;
         }

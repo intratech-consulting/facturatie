@@ -8,6 +8,7 @@ const { getClientIdByUuid } = require("./masteruuid");
 const constants = require("./constants");
 
 const parser = new XMLParser();
+const builder = new XMLBuilder();
 const fossbilling = new FossbillingAdmin();
 
 let invoicePublisherChannel;
@@ -45,7 +46,7 @@ async function setupOrderConsumer(order, channel, msg) {
           },
         };
         
-        const xml = XMLBuilder.buildObject(invoice);
+        const xml = builder.buildObject(invoice);
         console.log('publishing invoice')
         invoicePublisherChannel.publish(
           constants.MAIN_EXCHANGE,
