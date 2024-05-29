@@ -165,8 +165,11 @@ async function setupUserConsumer(connection) {
             channel.ack(msg);
             console.log("Return hard delete message")
             user.routing_key = constants.USER_ROUTING;
-            console.log("Publishing message: " + user)
-            channel.publish(constants.MAIN_EXCHANGE, constants.USER_ROUTING, Buffer.from(user));
+            const builder = new xml2js.Builder();
+            const xml = builder.buildObject(user);
+            console.log("Publishing message: " + xml);
+            channel.publish(constants.MAIN_EXCHANGE, constants.USER_ROUTING, Buffer.from(xml));
+            logger.log('setupUserPublisher', `Published message: ${xml}`, false);
           } catch (error) {
             console.log("ERROR:", error)
             logger.log(
