@@ -3,6 +3,7 @@ const Logger = require("./logger");
 const setupHeartbeats = require("./heartbeat");
 const setupConsumer = require("./consumer");
 const { setupUserPublisher } = require("./user");
+const { setupInvoicePublisher } = require("./order");
 require("dotenv").config();
 
 async function main() {

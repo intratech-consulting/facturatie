@@ -1,6 +1,7 @@
 const axios = require("axios");
 const BoxBillingService = require("./bbService");
 const Encryption = require("./encryption");
+const { response } = require("express");
 require("dotenv").config();
 
 class admin {
@@ -119,21 +120,21 @@ class admin {
     async createOrder(orderData, clientID = orderData.id) {
 
         // Check if required parameters are provided
-        if (!orderData.id || !orderData.products.product[0].product_id) {
+        if (!orderData.id || !orderData.products.product.product_id) {
             throw new Error('client_id and product_id are required');
         }
 
         // Prepare the data for the API call
         const data = {
             client_id: clientID,
-            product_id: orderData.products.product[0].product_id,
+            product_id: orderData.products.product.product_id,
             config: orderData.config || {},
-            quantity: orderData.products.product[0].amount || 1,
+            quantity: orderData.products.product.amount || 1,
             price: orderData.total_price,
             company: orderData.company_id || "",
             currency: "",
             title: orderData.products.product.name || "Cola",
-            activate: orderData.activate,
+            status: "active",
             invoice_option: "issue-invoice",
             created_at: orderData.created_at,
             updated_at: orderData.updated_at
@@ -285,6 +286,32 @@ class admin {
         }
     }
 
+    async updateInvoice(invoiceId, status) {
+
+        let data = {};
+
+        if (status === 'paid') {
+            data = {
+                gateway_id: 1,
+                id: invoiceId,
+                status: "paid",
+            };
+        } else {
+            data = {
+                gateway_id: 1,
+                id: invoiceId,
+            };
+        }
+
+        try {
+            const response = await this.bbService.callMethod('invoice_update', [data]);
+            return response;
+        } catch (error) {
+            console.error(`Error updating invoice: ${error}`);
+            throw error;
+        }
+    }
+
     async finishOrder(orderData, clientId = orderData.id) {
 
         try {
@@ -297,15 +324,24 @@ class admin {
             // Get the unpaid_invoice_id
             const unpaidInvoiceId = orderDetails.unpaid_invoice_id;
 
+            await this.updateInvoice(unpaidInvoiceId, orderData.status);
+
             // Get the invoice details
             const invoiceDetails = await this.getInvoice(unpaidInvoiceId);
+            
 
-            if (orderData.status === 'paid') {
-                // Mark the invoice as paid in case the order is paid
-                await this.bbService.callMethod('invoice_mark_as_paid', [{ id: unpaidInvoiceId }]);
-            }
+            // if (orderData.status === 'paid') {
+            //     // Mark the invoice as paid in case the order is paid
+            //     const data = {
+            //         id: unpaidInvoiceId,
+            //         transactionId: unpaidInvoiceId,
+            //         execute: 1
+            //     };
+            //     console.log('data:', data)
+            //     const response = await this.bbService.callMethod('invoice_mark_as_paid', [data]);
+            // }
 
-            console.log(`Order finished: ${orderId} \n\n Invoice Base64: ${invoiceDetails}`);
+            console.log(`Order finished in Base64`);
             return invoiceDetails;
         } catch (error) {
             console.error(`Error finishing order: ${error}`);

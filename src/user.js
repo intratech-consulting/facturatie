@@ -19,7 +19,7 @@ async function setupUserPublisher(connection) {
   try {
     setTimeout(async () => {
       users = await fossbilling.getClientList();
-    }, 10000);
+    }, 5000);
     console.log("Users: " + users)
   } catch (error) {
     logger.log("setupUserPublisher", "Error during fetching clients.", true);
