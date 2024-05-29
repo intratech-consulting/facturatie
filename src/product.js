@@ -33,6 +33,10 @@ async function setupProductConsumer(connection) {
         const object = parser.parse(msg.content.toString());
         const product = object.product;
 
+        if (!product.routing_key.startsWith("product")) {
+          return;
+        }
+
         switch (product.crud_operation) {
             case "create":
               try {

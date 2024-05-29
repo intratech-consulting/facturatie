@@ -49,14 +49,20 @@ async function setupOrderConsumer(connection) {
         false,
       );
       const object = parser.parse(msg.content.toString());
-      switch (user.crud_operation) {
+      const order = object.order;
+
+      if (!order.routing_key.startsWith("order")) {
+        return;
+      }
+
+      switch (order.crud_operation) {
         case "create":
           try {
-            const clientId = await getClientIdByUuid(object.order.user_id);
+            const clientId = await getClientIdByUuid(order.user_id);
             const client = await fossbilling.getClient(clientId);
-            const productId = await getClientIdByUuid(object.order.products[0].product_id);
-            object.order.products[0].product_id = productId;
-            const invoicePDFBase64 = await fossbilling.createOrder(object.order, clientId);
+            const productId = await getClientIdByUuid(order.products[0].product_id);
+            order.products[0].product_id = productId;
+            const invoicePDFBase64 = await fossbilling.createOrder(order, clientId);
             let invoice = {
               Invoice: {
                 filename:

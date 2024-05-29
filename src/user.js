@@ -67,6 +67,9 @@ async function setupUserConsumer(connection) {
       );
       const object = parser.parse(msg.content.toString());
       const user = object.user;
+      if (!user.routing_key.startsWith("user")) {
+        return;
+      }
 
       switch (user.crud_operation) {
         case "create":
