@@ -153,7 +153,7 @@ async function setupUserConsumer(connection) {
               );
               channel.ack(msg);
               return;
-            }
+            }// delete client id 
             console.log("Deleting client with id: " + clientId)
             await fossbilling.deleteClient(clientId);
             logger.log(
@@ -161,7 +161,7 @@ async function setupUserConsumer(connection) {
               `Deleted client with id: ${clientId}`,
               false,
             );
-            await updateUuidToClientId(user.id, "NONE");
+            await updateUuidToClientId(user.id, "NULL");
             channel.ack(msg);
           } catch (error) {
             console.log("ERROR:", error)

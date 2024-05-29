@@ -392,6 +392,7 @@ module.exports = Object.freeze({
     MAIN_EXCHANGE: "amq.topic",
     INVOICE_ROUTING: "invoice.facturatie",
     USER_ROUTING: "user.facturatie",
+    PRODUCT_ROUTING: "product.facturatie",
     WEBHOOK_PORT: 877,
     HEARTBEAT_XSD,
     LOG_XSD,
