@@ -35,7 +35,7 @@ async function setupOrderConsumer(order, channel, msg, connection) {
   switch (order.crud_operation) {
     case "create":
       try {
-        if (!order.user_id === '') {
+        if (order.user_id !== '') {
           const clientId = (await getClientIdByUuid(order.user_id)).facturatie;
         } else { 
           return;
