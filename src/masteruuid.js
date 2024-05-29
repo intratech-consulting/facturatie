@@ -148,12 +148,12 @@ RESPONSE
 async function linkUuidToProductId(uuid, productId) {
   let data = {
     MasterUuid: uuid,
-    ProductId: productId,
+    ServiceId: productId,
     Service: serviceName,
   };
   let request = {
     method: "POST",
-    url: address + "/addProductUuid",
+    url: address + "/addServiceId",
     headers: {
       "Content-Type": "application/json",
     },
@@ -180,12 +180,12 @@ RESPONSE
 async function updateUuidToProductId(uuid, productId) {
   let data = {
     MasterUuid: uuid,
-    ProductId: productId,
+    NewServiceId: productId,
     Service: serviceName,
   };
   let request = {
     method: "POST",
-    url: address + "/updateProductUuid",
+    url: address + "/updateServiceId",
     headers: {
       "Content-Type": "application/json",
     },
@@ -214,7 +214,7 @@ async function getProductIdByUuid(uuid) {
   };
   let request = {
     method: "POST",
-    url: address + "/getProductId",
+    url: address + "/getServiceId",
     headers: {
       "Content-Type": "application/json",
     },
@@ -238,12 +238,12 @@ RESPONSE
 */
 async function getUuidByProductId(productId) {
   let data = {
-    ProductId: productId,
+    ServiceId: productId,
     Service: serviceName,
   };
   let request = {
     method: "POST",
-    url: address + "/getMasterUuidByProduct",
+    url: address + "/getMasterUuid",
     headers: {
       "Content-Type": "application/json",
     },
