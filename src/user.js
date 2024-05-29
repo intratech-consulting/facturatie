@@ -17,7 +17,9 @@ async function setupUserPublisher(connection) {
   logger.log("setupUserPublisher", `Asserted exchange: ${constants.MAIN_EXCHANGE}`, false);
 
   try {
-    users = await fossbilling.getClientList();
+    setTimeout(async () => {
+      users = await fossbilling.getClientList();
+    }, 10000);
     console.log("Users: " + users)
   } catch (error) {
     logger.log("setupUserPublisher", "Error during fetching clients.", true);
