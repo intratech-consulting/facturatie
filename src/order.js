@@ -1,6 +1,6 @@
 const amqp = require("amqplib");
 const fs = require("fs");
-const { XMLParser, j2xParser, XMLValidator } = require("fast-xml-parser");
+const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 
 const logger = require("./logger").getLogger();
 const FossbillingAdmin = require("./fossbilling/admin");
@@ -8,7 +8,7 @@ const { getClientIdByUuid } = require("./masteruuid");
 const constants = require("./constants");
 
 const parser = new XMLParser();
-const builder = new j2xParser();
+const builder = new XMLBuilder();
 const fossbilling = new FossbillingAdmin();
 
 let invoicePublisherChannel;
@@ -46,7 +46,7 @@ async function setupOrderConsumer(order, channel, msg) {
           },
         };
         
-        const xml = builder.parse(invoice);
+        const xml = builder.build({ invoice });
         console.log('publishing invoice')
         invoicePublisherChannel.publish(
           constants.MAIN_EXCHANGE,
