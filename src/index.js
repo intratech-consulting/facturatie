@@ -19,8 +19,6 @@ async function main() {
   await setupConsumer(connection);
 
   await setupUserPublisher(connection);
-
-  await setup
 }
 
 main();

@@ -26,10 +26,11 @@ async function setupUserPublisher(connection) {
 
   while (true) {
     setTimeout(async () => {
+      console.log("Checking for new users")
       let newUsers = await fossbilling.getClientList();
       let diff = newUsers.filter(x => !users.includes(x));
       users = newUsers;
-      print("Diff: " + diff)
+      console.log("Diff: " + diff)
       for (let user of diff) {
         user.routing_key = constants.USER_ROUTING;
         const builder = new XMLBuilder();
