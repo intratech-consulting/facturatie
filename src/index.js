@@ -3,6 +3,7 @@ const Logger = require("./logger");
 const { setupUserPublisher, setupUserConsumer } = require("./user");
 const { setupInvoicePublisher, setupOrderConsumer }= require("./order");
 const setupHeartbeats = require("./heartbeat");
+const { setupProductConsumer } = require("./product");
 require("dotenv").config();
 
 async function main() {
@@ -17,7 +18,12 @@ async function main() {
   await logger.setupLogger(connection);
   await setupHeartbeats(connection);
   await setupUserConsumer(connection);
+
+  await setupUserPublisher(connection);
+  await setupProductConsumer(connection);
+
   //await setupUserPublisher(connection);
+
 }
 
 main();
