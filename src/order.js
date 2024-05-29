@@ -35,11 +35,11 @@ async function setupOrderConsumer(order, channel, msg) {
         console.log('Client: ', client)
         const productId = await getClientIdByUuid(order.products[0].product_id);
         order.products[0].product_id = productId;
-        const invoicePDFBase64 = await fossbilling.createOrder(order, clientId);
+        const invoicePDFBase64 = await fossbilling.finishOrder(order, clientId);
         let invoice = {
           Invoice: {
             filename:
-              client.name + "_" + client.lastname + "_" + order.id + ".pdf",
+              client.first_name + "_" + client.last_name + "_" + order.id + ".pdf",
             email: client.email,
             pdfBase64: invoicePDFBase64,
           },
