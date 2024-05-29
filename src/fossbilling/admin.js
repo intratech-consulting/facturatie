@@ -312,6 +312,7 @@ class admin {
 
             // Get the unpaid_invoice_id
             const unpaidInvoiceId = orderDetails.unpaid_invoice_id;
+            console.log(`Unpaid Invoice ID: ${unpaidInvoiceId}`);
 
             await this.updateInvoice(unpaidInvoiceId);
 
