@@ -30,7 +30,7 @@ async function setupOrderConsumer(order, channel, msg) {
   switch (order.crud_operation) {
     case "create":
       try {
-        const clientId = await getClientIdByUuid(order.user_id);
+        const clientId = (await getClientIdByUuid(order.user_id)).facturatie;
         const client = await fossbilling.getClient('', clientId);
         console.log('Client: ', client)
         const productId = await getClientIdByUuid(order.products[0].product_id);
