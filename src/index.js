@@ -18,10 +18,12 @@ async function main() {
   await logger.setupLogger(connection);
   await setupHeartbeats(connection);
 
+  await setupProductConsumer(connection);
+
   await setupUserConsumer(connection);
   await setupUserPublisher(connection);
 
-  await setupProductConsumer(connection);
+  
 
   await setupOrderConsumer(connection);
 
