@@ -56,6 +56,7 @@ async function setupOrderConsumer(order, channel, msg) {
         console.log('invoice published')
         channel.ack(msg);
       } catch (error) {
+        console.log(error);
         logger.log(
           "setupOrderConsumer",
           `Nack message: ${msg.content.toString()}`,
