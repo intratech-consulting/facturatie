@@ -309,15 +309,94 @@ const ORDER_XSD = `
 </xs:schema>
 `;
 
+const PRODUCT_XSD = `
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="product">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="routing_key">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:minLength value="1"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="crud_operation">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="create"/>
+                            <xs:enumeration value="update"/>
+                            <xs:enumeration value="delete"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="id">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:minLength value="1"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="name" type="xs:string" nillable="true"/>
+                <xs:element name="price">
+                    <xs:simpleType>
+                        <xs:union>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:length value="0"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:decimal"/>
+                            </xs:simpleType>
+                        </xs:union>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="amount">
+                    <xs:simpleType>
+                        <xs:union>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:length value="0"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:integer"/>
+                            </xs:simpleType>
+                        </xs:union>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="category" type="xs:string" nillable="true"/>
+                <xs:element name="btw">
+                    <xs:simpleType>
+                        <xs:union>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:length value="0"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:decimal"/>
+                            </xs:simpleType>
+                        </xs:union>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+`;
+
 module.exports = Object.freeze({
-  SYSTEM: "facturatie",
-  MAIN_EXCHANGE: "amq.topic",
-  INVOICE_ROUTING: "invoice.facturatie",
-  USER_ROUTING: "user.facturatie",
-  WEBHOOK_PORT: 877,
-  HEARTBEAT_XSD,
-  LOG_XSD,
-  USER_XSD,
-  COMPANY_XSD,
-  ORDER_XSD
+    SYSTEM: "facturatie",
+    MAIN_EXCHANGE: "amq.topic",
+    INVOICE_ROUTING: "invoice.facturatie",
+    USER_ROUTING: "user.facturatie",
+    WEBHOOK_PORT: 877,
+    HEARTBEAT_XSD,
+    LOG_XSD,
+    USER_XSD,
+    COMPANY_XSD,
+    ORDER_XSD,
+    PRODUCT_XSD
 });
