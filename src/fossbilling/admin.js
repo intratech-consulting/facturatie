@@ -288,14 +288,16 @@ class admin {
 
     async updateInvoice(invoiceId, status) {
 
+        let data = {};
+
         if (status === 'paid') {
-            const data = {
+            data = {
                 gateway_id: 1,
                 id: invoiceId,
                 status: "paid",
             };
         } else {
-            const data = {
+            data = {
                 gateway_id: 1,
                 id: invoiceId,
             };
