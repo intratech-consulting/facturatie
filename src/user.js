@@ -154,7 +154,13 @@ async function setupUserConsumer(connection) {
               return;
             }// delete client id 
             console.log("Deleting client with id: " + clientId)
-            await fossbilling.deleteClient(clientId);
+            try {
+              await fossbilling.deleteClient(clientId);
+            } catch (error) {
+              console.log("Not deleting client with id: " + clientId + " because of " + error)
+              channel.ack(msg);
+              return;
+            }
             logger.log(
               "setupUserConsumer",
               `Deleted client with id: ${clientId}`,
