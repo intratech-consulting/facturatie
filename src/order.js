@@ -31,7 +31,8 @@ async function setupOrderConsumer(order, channel, msg) {
     case "create":
       try {
         const clientId = await getClientIdByUuid(order.user_id);
-        const client = await fossbilling.getClient(clientId);
+        const client = await fossbilling.getClient('', clientId);
+        console.log('Client: ', client)
         const productId = await getClientIdByUuid(order.products[0].product_id);
         order.products[0].product_id = productId;
         const invoicePDFBase64 = await fossbilling.createOrder(order, clientId);

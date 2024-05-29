@@ -18,7 +18,7 @@ async function main() {
   await setupHeartbeats(connection);
   await setupConsumer(connection);
 
-  await setupUserPublisher(connection);
+  //await setupUserPublisher(connection);
 }
 
 main();
