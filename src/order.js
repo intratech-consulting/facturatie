@@ -38,16 +38,15 @@ async function setupOrderConsumer(order, channel, msg) {
         const invoicePDFBase64 = await fossbilling.finishOrder(order, clientId);
         console.log('order created, invoice retrieved')
         let invoice = {
-          Invoice: {
+            routing_key: constants.INVOICE_ROUTING,
             filename:
               client.first_name + "_" + client.last_name + "_" + order.id + ".pdf",
             email: client.email,
-            pdfBase64: invoicePDFBase64,
-          },
+            pdfBase64: invoicePDFBase64
         };
         
         const xml = builder.build({ invoice });
-        console.log('publishing invoice')
+        console.log('publishing invoice: ', xml)
         invoicePublisherChannel.publish(
           constants.MAIN_EXCHANGE,
           constants.INVOICE_ROUTING,
