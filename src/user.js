@@ -82,7 +82,7 @@ async function setupUserConsumer(user, channel, msg) {
           `Error during creation - User UUID: ${user.id}.`,
           true,
         );
-        channel.nack(msg);
+        channel.ack(msg);
       }
       break;
     case "update":
@@ -115,7 +115,7 @@ async function setupUserConsumer(user, channel, msg) {
           `Error during update - User UUID: ${user.id}.`,
           true,
         );
-        channel.nack(msg);
+        channel.ack(msg);
       }
       break;
     case "delete":
@@ -170,7 +170,7 @@ async function setupUserConsumer(user, channel, msg) {
           `Error during deletion - User UUID: ${user.id}.`,
           true,
         );
-        channel.nack(msg);
+        channel.ack(msg);
       }
       break;
     default:
@@ -179,7 +179,7 @@ async function setupUserConsumer(user, channel, msg) {
         `Unknown operation: ${user.crud_operation}`,
         true,
       );
-      channel.nack(msg);
+      channel.ack(msg);
     }
 }
 

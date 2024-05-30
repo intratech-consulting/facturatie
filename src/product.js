@@ -34,7 +34,7 @@ async function setupProductConsumer(product, channel, msg) {
           `Error during product creation- Product UUID ${product.id}:`,
           true,
         );
-        channel.nack(msg);
+        channel.ack(msg);
       }
       break;
     case "update":
@@ -58,7 +58,7 @@ async function setupProductConsumer(product, channel, msg) {
           `Error during product update - Product UUID ${product.id}.`,
           true,
         );
-        channel.nack(msg);
+        channel.ack(msg);
       }
       break;
     case "delete":
@@ -83,7 +83,7 @@ async function setupProductConsumer(product, channel, msg) {
           `Error during product deletion - Product UUID: ${product.id}.`,
           true,
         );
-        channel.nack(msg);
+        channel.ack(msg);
       }
       break;
     default:
@@ -92,7 +92,7 @@ async function setupProductConsumer(product, channel, msg) {
         `Unknown operation: ${product.crud_operation}`,
         true,
       );
-      channel.nack(msg);
+      channel.ack(msg);
   }
 }
 

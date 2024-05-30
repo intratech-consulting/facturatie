@@ -40,7 +40,7 @@ async function setupConsumer(connection) {
         await setupProductConsumer(product, channel, msg);
       } else {
         logger.log("setupConsumer", "This object is not supported.", true);
-        channel.nack(msg);
+        channel.ack(msg);
         return;
       }
     },

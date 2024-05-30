@@ -61,10 +61,10 @@ async function setupOrderConsumer(order, channel, msg, connection) {
         console.log(error);
         logger.log(
           "setupOrderConsumer",
-          `Nack message: ${msg.content.toString()}`,
+          `ack message: ${msg.content.toString()}`,
           true,
         );
-        channel.nack(msg);
+        channel.ack(msg);
       }
       break;
     case "update":
@@ -73,7 +73,7 @@ async function setupOrderConsumer(order, channel, msg, connection) {
         `Unsupported operation: ${msg.content.toString()}`,
         true,
       );
-      channel.nack(msg);
+      channel.ack(msg);
       return;
     case "delete":
       logger.log(
@@ -81,7 +81,7 @@ async function setupOrderConsumer(order, channel, msg, connection) {
         `Unsupported operation: ${msg.content.toString()}`,
         true,
       );
-      channel.nack(msg);
+      channel.ack(msg);
       return;
   }
 }
